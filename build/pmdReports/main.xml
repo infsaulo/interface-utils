@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<pmd version="4.3" timestamp="2016-09-21T20:25:51.072">
-<error filename="/Users/sauloricci/interface-utils/src/main/java/tools/utils/web/WebRequester.java" msg="Error while parsing /Users/sauloricci/interface-utils/src/main/java/tools/utils/web/WebRequester.java"/>
-</pmd>

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="tech.skry.web.WebRequesterTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2016-09-19T14:29:55" hostname="Saulos-MacBook-Pro.local" time="0.365">
-  <properties/>
-  <testcase name="testURLRequest" classname="tech.skry.web.WebRequesterTest" time="0.365"/>
-  <system-out><![CDATA[]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>

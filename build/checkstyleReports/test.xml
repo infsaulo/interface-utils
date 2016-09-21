@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<checkstyle version="7.2-SNAPSHOT">
-<file name="/Users/sauloricci/interface-utils/src/test/java/tools/utils/gcs/GcsInterfaceTest.java">
-</file>
-<file name="/Users/sauloricci/interface-utils/src/test/java/tools/utils/web/WebRequesterTest.java">
-</file>
-</checkstyle>
