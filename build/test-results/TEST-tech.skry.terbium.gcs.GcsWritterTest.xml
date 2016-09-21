@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tech.skry.terbium.gcs.GcsWritterTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2016-09-19T14:29:50" hostname="Saulos-MacBook-Pro.local" time="3.722">
+  <properties/>
+  <testcase name="testWriteGcsFile" classname="tech.skry.terbium.gcs.GcsWritterTest" time="3.722"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tools.utils.gcs.GcsInterfaceTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2016-09-21T23:33:00" hostname="Saulos-MacBook-Pro.local" time="3.89">
+  <properties/>
+  <testcase name="testWriteGcsFile" classname="tools.utils.gcs.GcsInterfaceTest" time="3.89"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

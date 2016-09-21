@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="tools.utils.web.WebRequesterTest" tests="3" skipped="0" failures="0" errors="0" timestamp="2016-09-21T23:33:05" hostname="Saulos-MacBook-Pro.local" time="0.822">
+  <properties/>
+  <testcase name="testPostUrl" classname="tools.utils.web.WebRequesterTest" time="0.379"/>
+  <testcase name="testHeaders" classname="tools.utils.web.WebRequesterTest" time="0.152"/>
+  <testcase name="testGetUrl" classname="tools.utils.web.WebRequesterTest" time="0.29"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
