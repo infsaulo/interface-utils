@@ -166,3 +166,9 @@ findbugs {
       toolVersion = "+"
       ignoreFailures = false
    }
+   
+   sourceSets {
+    main {
+       output.resourcesDir = "build"
+     }
+  }
