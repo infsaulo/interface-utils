@@ -2,10 +2,9 @@ package tools.utils.gcs;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
-import java.security.KeyStore;
-import java.security.PrivateKey;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -89,15 +88,11 @@ public class GcsInterface {
   private Storage setupStorage(final String gcsAccountId, final String keyFilename,
       final String keyPass) throws GeneralSecurityException, IOException {
 
-    final KeyStore keyStore = KeyStore.getInstance("PKCS12");
-    keyStore.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(keyFilename),
-        keyPass.toCharArray());
-    final PrivateKey key = (PrivateKey) keyStore.getKey("privatekey", keyPass.toCharArray());
     final GoogleCredential credential =
         new GoogleCredential.Builder().setTransport(new NetHttpTransport())
             .setJsonFactory(new JacksonFactory()).setServiceAccountId(gcsAccountId)
             .setServiceAccountScopes(Lists.newArrayList(StorageScopes.DEVSTORAGE_FULL_CONTROL))
-            .setServiceAccountPrivateKey(key).build();
+            .setServiceAccountPrivateKeyFromP12File(new File(keyFilename)).build();
 
     return new Storage.Builder(new NetHttpTransport(), new JacksonFactory(), credential)
         .setApplicationName("Generic Pipeline").build();
