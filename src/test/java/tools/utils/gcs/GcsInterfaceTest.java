@@ -15,8 +15,6 @@ public class GcsInterfaceTest {
   static final String filename = "test.csv";
   static final GcsInterface writter = new GcsInterface(accountId, keyFilename, keyPass);
 
-
-
   @Test
   public void testWriteGcsFile() {
 
