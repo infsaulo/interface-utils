@@ -67,7 +67,7 @@ public class WebRequester {
     try {
       while ((inputLine = br.readLine()) != null) {
 
-        sb.append(inputLine);
+        sb.append(inputLine.trim() + "\n");
       }
     } catch (final IOException e) {
 
