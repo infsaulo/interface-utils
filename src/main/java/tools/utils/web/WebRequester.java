@@ -10,10 +10,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.api.client.util.Charsets;
 
 public class WebRequester {
+
+  private static final Logger LOGGER = Logger.getLogger(WebRequester.class.getName());
 
   public static String doGet(final String urlLink) throws IOException {
 
@@ -71,7 +75,7 @@ public class WebRequester {
       }
     } catch (final IOException e) {
 
-      e.printStackTrace();
+      LOGGER.log(Level.SEVERE, e.toString(), e);
     }
 
     return sb.toString();
