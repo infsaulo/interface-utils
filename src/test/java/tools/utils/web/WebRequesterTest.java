@@ -16,7 +16,7 @@ public class WebRequesterTest {
 
     try {
 
-      final String pageContent = WebRequester.doGet("https://www.google.com");
+      final String pageContent = WebRequester.doGet("https://www.google.com", false);
       Assert.assertNotNull(pageContent);
     } catch (final IOException e) {
 
@@ -34,7 +34,7 @@ public class WebRequesterTest {
       data.put("field", 1L);
       data.put("field2", 2L);
       final String postContent =
-          WebRequester.doPost("http://httpbin.org/post", JsonTools.serialize(data), null);
+          WebRequester.doPost("http://httpbin.org/post", JsonTools.serialize(data), null, false);
       Assert.assertNotNull(postContent);
     } catch (final IOException e) {
 
@@ -51,7 +51,8 @@ public class WebRequesterTest {
     headers.put("Header2", "value 2");
     try {
 
-      final String headersContent = WebRequester.doPost("http://httpbin.org/post", "", headers);
+      final String headersContent =
+          WebRequester.doPost("http://httpbin.org/post", "", headers, false);
       Assert.assertNotNull(headersContent);
     } catch (final IOException e) {
 

@@ -19,18 +19,18 @@ public class WebRequester {
 
   private static final Logger LOGGER = Logger.getLogger(WebRequester.class.getName());
 
-  public static String doGet(final String urlLink) throws IOException {
+  public static String doGet(final String urlLink, final boolean trimFirstLine) throws IOException {
 
     final URL url = new URL(urlLink);
     final URLConnection conn = url.openConnection();
 
-    final String response = readFromInputStream(conn.getInputStream());
+    final String response = readFromInputStream(conn.getInputStream(), trimFirstLine);
 
     return response;
   }
 
   public static String doPost(final String urlLink, final String payload,
-      final Map<String, String> headers) throws IOException {
+      final Map<String, String> headers, final boolean trimFirstLine) throws IOException {
 
     final URL url = new URL(urlLink);
     final URLConnection con = url.openConnection();
@@ -56,19 +56,26 @@ public class WebRequester {
       os.write(out);
     }
 
-    final String response = readFromInputStream(http.getInputStream());
+    final String response = readFromInputStream(http.getInputStream(), trimFirstLine);
 
     return response;
   }
 
-  private static String readFromInputStream(final InputStream input) {
+  private static String readFromInputStream(final InputStream input, final boolean trimFirstLine) {
 
     final BufferedReader br = new BufferedReader(new InputStreamReader(input, Charsets.UTF_8));
 
     final StringBuffer sb = new StringBuffer();
 
     String inputLine;
+
     try {
+
+      if (trimFirstLine) {
+
+        inputLine = br.readLine();
+      }
+
       while ((inputLine = br.readLine()) != null) {
 
         sb.append(inputLine.trim() + "\n");
