@@ -16,7 +16,7 @@ public class WebRequesterTest {
 
     try {
 
-      final String pageContent = WebRequester.doGet("https://www.google.com", false);
+      final String pageContent = WebRequester.doGet("https://www.google.com", null, false);
       Assert.assertNotNull(pageContent);
     } catch (final IOException e) {
 

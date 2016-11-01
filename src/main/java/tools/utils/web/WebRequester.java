@@ -19,12 +19,26 @@ public class WebRequester {
 
   private static final Logger LOGGER = Logger.getLogger(WebRequester.class.getName());
 
-  public static String doGet(final String urlLink, final boolean trimFirstLine) throws IOException {
+  public static String doGet(final String urlLink, final Map<String, String> headers,
+      final boolean trimFirstLine) throws IOException {
 
     final URL url = new URL(urlLink);
-    final URLConnection conn = url.openConnection();
+    final URLConnection con = url.openConnection();
+    final HttpURLConnection http = (HttpURLConnection) con;
 
-    final String response = readFromInputStream(conn.getInputStream(), trimFirstLine);
+    http.setRequestMethod("GET");
+    http.setDoOutput(false);
+
+    if (headers != null) {
+      final Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
+      while (it.hasNext()) {
+        final Map.Entry<String, String> pair = it.next();
+        http.setRequestProperty(pair.getKey(), pair.getValue());
+      }
+    }
+    http.connect();
+
+    final String response = readFromInputStream(http.getInputStream(), trimFirstLine);
 
     return response;
   }
