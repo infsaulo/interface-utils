@@ -13,7 +13,16 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.google.api.client.http.GenericUrl;
+import com.google.api.client.http.HttpBackOffUnsuccessfulResponseHandler;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.util.Charsets;
+import com.google.api.client.util.ExponentialBackOff;
 
 public class WebRequester {
 
@@ -23,22 +32,29 @@ public class WebRequester {
       final boolean trimFirstLine) throws IOException {
 
     final URL url = new URL(urlLink);
-    final URLConnection con = url.openConnection();
-    final HttpURLConnection http = (HttpURLConnection) con;
 
-    http.setRequestMethod("GET");
-    http.setDoOutput(false);
+    final HttpTransport transport = new NetHttpTransport();
+    final HttpRequestFactory factory = transport.createRequestFactory();
+    final GenericUrl urlGeneric = new GenericUrl(url);
+    final HttpRequest request = factory.buildGetRequest(urlGeneric);
+
+    request.setUnsuccessfulResponseHandler(
+        new HttpBackOffUnsuccessfulResponseHandler(new ExponentialBackOff()));
 
     if (headers != null) {
+      final HttpHeaders headersHttp = new HttpHeaders();
+
       final Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
       while (it.hasNext()) {
         final Map.Entry<String, String> pair = it.next();
-        http.setRequestProperty(pair.getKey(), pair.getValue());
+        headersHttp.set(pair.getKey(), pair.getValue());
       }
+      request.setHeaders(headersHttp);
     }
-    http.connect();
 
-    final String response = readFromInputStream(http.getInputStream(), trimFirstLine);
+    final HttpResponse responseHttp = request.execute();
+
+    final String response = readFromInputStream(responseHttp.getContent(), trimFirstLine);
 
     return response;
   }
