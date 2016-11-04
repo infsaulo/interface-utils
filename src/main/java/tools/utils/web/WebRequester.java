@@ -47,7 +47,13 @@ public class WebRequester {
       final Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
       while (it.hasNext()) {
         final Map.Entry<String, String> pair = it.next();
-        headersHttp.set(pair.getKey(), pair.getValue());
+        if (pair.getKey().equals("Authorization")) {
+
+          headersHttp.setAuthorization(pair.getValue());
+        } else {
+
+          headersHttp.set(pair.getKey(), pair.getValue());
+        }
       }
       request.setHeaders(headersHttp);
     }
