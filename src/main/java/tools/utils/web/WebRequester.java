@@ -38,9 +38,9 @@ public class WebRequester {
     final GenericUrl urlGeneric = new GenericUrl(url);
     final HttpRequest request = factory.buildGetRequest(urlGeneric);
 
-    final ExponentialBackOff backOff = new ExponentialBackOff.Builder()
-        .setInitialIntervalMillis(120000).setMaxIntervalMillis(600000)
-        .setMaxElapsedTimeMillis(900000).setMultiplier(1.5).setRandomizationFactor(0.5).build();
+    final ExponentialBackOff backOff =
+        new ExponentialBackOff.Builder().setInitialIntervalMillis(2000).setMaxIntervalMillis(60000)
+            .setMaxElapsedTimeMillis(600000).setMultiplier(1.5).setRandomizationFactor(0.5).build();
     request.setUnsuccessfulResponseHandler(
         new HttpBackOffUnsuccessfulResponseHandler(new ExponentialBackOff()));
 
