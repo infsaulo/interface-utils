@@ -3,6 +3,7 @@
 /.settings
 /.classpath
 /.project
+/.idea
 /logs
 /bin
 /secrets
