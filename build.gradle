@@ -53,6 +53,7 @@ sourceCompatibility = 1.8
    }
 
    repositories {
+       mavenCentral()
       maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
       jcenter()
    }
@@ -60,6 +61,7 @@ sourceCompatibility = 1.8
    dependencies {
 
       compile 'com.google.apis:google-api-services-storage:+'
+      compile 'com.microsoft.azure:azure-storage:+'
   	  compile 'com.wizzardo.tools:tools:+'
   
       testCompile 'junit:junit:+'
