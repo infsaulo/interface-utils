@@ -1,12 +1,19 @@
 package tools.utils.azure.storage;
 
+import com.google.api.client.util.Charsets;
+
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.blob.CloudBlob;
+import com.microsoft.azure.storage.blob.CloudBlobClient;
+import com.microsoft.azure.storage.blob.CloudBlobContainer;
+import com.microsoft.azure.storage.blob.CloudBlockBlob;
 import com.microsoft.azure.storage.file.CloudFile;
 import com.microsoft.azure.storage.file.CloudFileClient;
 import com.microsoft.azure.storage.file.CloudFileDirectory;
 import com.microsoft.azure.storage.file.CloudFileShare;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.InvalidKeyException;
@@ -23,21 +30,34 @@ public class AzureStorageInterface {
 
   CloudFileClient client = null;
 
+  CloudBlobClient blobClient = null;
+
+  CloudBlobContainer container = null;
+
   CloudFileShare share = null;
 
   CloudFileDirectory rootDir = null;
 
-  public AzureStorageInterface(String accountName, String accountKey, String shareName) {
+  public AzureStorageInterface(String accountName, String accountKey, String shareName, String
+      containerName) {
 
     connectionUrl = String.format("DefaultEndpointsProtocol=http;AccountName=%s;"
-                                            + "AccountKey=%s", accountName, accountKey);
+                                  + "AccountKey=%s", accountName, accountKey);
 
     try {
 
       storageAccount = CloudStorageAccount.parse(connectionUrl);
-      client = storageAccount.createCloudFileClient();
-      share = client.getShareReference(shareName);
-      rootDir = share.getRootDirectoryReference();
+      if (shareName != null) {
+
+        client = storageAccount.createCloudFileClient();
+        share = client.getShareReference(shareName);
+        rootDir = share.getRootDirectoryReference();
+      }
+      if (containerName != null) {
+
+        blobClient = storageAccount.createCloudBlobClient();
+        container = blobClient.getContainerReference(containerName);
+      }
     } catch (InvalidKeyException | URISyntaxException | StorageException e) {
 
       LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -70,6 +90,35 @@ public class AzureStorageInterface {
       final CloudFile file = dir.getFileReference(filename);
       file.uploadText(content);
     } catch (StorageException | URISyntaxException | IOException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+    }
+  }
+
+  public String readBlob(String blobName) {
+
+    try {
+
+      CloudBlockBlob blob = container.getBlockBlobReference(blobName);
+      String content = blob.downloadText();
+
+      return content;
+
+    } catch (IOException | URISyntaxException | StorageException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+    }
+    return null;
+  }
+
+  public void writeBlob(String blobName, String content) {
+
+    try {
+
+      CloudBlob blob = container.getBlockBlobReference(blobName);
+      byte[] contentBytes = content.getBytes(Charsets.UTF_8);
+      blob.upload(new ByteArrayInputStream(contentBytes), contentBytes.length);
+    } catch (IOException | URISyntaxException | StorageException e) {
 
       LOGGER.log(Level.SEVERE, e.toString(), e);
     }
