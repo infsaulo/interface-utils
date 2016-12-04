@@ -1,4 +1,3 @@
-
 package tools.utils.azure.storage;
 
 import com.google.api.client.util.Charsets;
@@ -148,5 +147,19 @@ public class AzureStorageInterface {
 
       LOGGER.log(Level.SEVERE, e.toString(), e);
     }
+  }
+
+  public boolean blobExists(String blobName) {
+
+    try {
+
+      CloudAppendBlob blob = container.getAppendBlobReference(blobName);
+      return blob.exists();
+    } catch (URISyntaxException | StorageException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+    }
+
+    return false;
   }
 }
