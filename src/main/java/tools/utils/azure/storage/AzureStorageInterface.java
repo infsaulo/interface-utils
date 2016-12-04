@@ -1,9 +1,11 @@
+
 package tools.utils.azure.storage;
 
 import com.google.api.client.util.Charsets;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
 import com.microsoft.azure.storage.StorageException;
+import com.microsoft.azure.storage.blob.CloudAppendBlob;
 import com.microsoft.azure.storage.blob.CloudBlob;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
 import com.microsoft.azure.storage.blob.CloudBlobContainer;
@@ -119,6 +121,30 @@ public class AzureStorageInterface {
       byte[] contentBytes = content.getBytes(Charsets.UTF_8);
       blob.upload(new ByteArrayInputStream(contentBytes), contentBytes.length);
     } catch (IOException | URISyntaxException | StorageException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+    }
+  }
+
+  public void appendBlob(String blobName, String content) {
+
+    try {
+
+      CloudAppendBlob blob = container.getAppendBlobReference(blobName);
+      blob.appendText(content);
+    } catch (URISyntaxException | StorageException | IOException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+    }
+  }
+
+  public void createAppendBlob(String blobName) {
+
+    try {
+
+      CloudAppendBlob blob = container.getAppendBlobReference(blobName);
+      blob.createOrReplace();
+    } catch (URISyntaxException | StorageException e) {
 
       LOGGER.log(Level.SEVERE, e.toString(), e);
     }
