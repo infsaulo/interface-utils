@@ -125,6 +125,18 @@ public class AzureStorageInterface {
     }
   }
 
+  public void writeBlobFromFile(String blobName, String filePath) {
+
+    try {
+
+      CloudBlob blob = container.getBlockBlobReference(blobName);
+      blob.uploadFromFile(filePath);
+    } catch (IOException | URISyntaxException | StorageException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
+    }
+  }
+
   public void appendBlob(String blobName, String content) {
 
     try {
