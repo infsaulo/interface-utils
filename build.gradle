@@ -60,11 +60,12 @@ sourceCompatibility = 1.8
 
    dependencies {
 
-      compile 'com.google.apis:google-api-services-storage:+'
-      compile 'com.microsoft.azure:azure-storage:+'
-  	  compile 'com.wizzardo.tools:tools:+'
+       compile 'com.google.apis:google-api-services-storage:+'
+       compile 'com.microsoft.azure:azure-storage:+'
+       compile 'com.microsoft.azure:azure-documentdb:+'
+  	   compile 'com.wizzardo.tools:tools:+'
   
-      testCompile 'junit:junit:+'
+       testCompile 'junit:junit:+'
    }
 
 
