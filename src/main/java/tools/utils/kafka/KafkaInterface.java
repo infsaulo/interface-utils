@@ -15,7 +15,7 @@ public class KafkaInterface {
 
   public KafkaInterface(String kafkaUrlProducer) {
 
-    Properties props = new Properties();
+    final Properties props = new Properties();
     props.put("bootstrap.servers", kafkaUrlProducer);
     props.put("acks", "all");
     props.put("retries", 0);
@@ -26,7 +26,7 @@ public class KafkaInterface {
     producer = new KafkaProducer<>(props);
   }
 
-  public void sendMessage(final String key, final String topic, final String msg){
+  public void sendMessage(final String key, final String topic, final String msg) {
 
     final ProducerRecord<String, String> recordMsg = new ProducerRecord<>(topic, key, msg);
 
