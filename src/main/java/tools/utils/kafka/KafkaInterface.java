@@ -33,4 +33,9 @@ public class KafkaInterface {
     producer.send(recordMsg);
     producer.flush();
   }
+
+  public void closeInterface() {
+
+    producer.close();
+  }
 }
