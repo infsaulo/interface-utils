@@ -63,10 +63,10 @@ sourceCompatibility = 1.8
        compile 'com.google.apis:google-api-services-storage:+'
        compile 'com.microsoft.azure:azure-storage:+'
        compile 'com.microsoft.azure:azure-documentdb:+'
-  	   compile 'com.wizzardo.tools:tools:+'
+       compile 'com.wizzardo.tools:tools:+'
        compile 'org.zeromq:jeromq:+'
        compile 'org.apache.kafka:kafka-clients:+'
-  
+
        testCompile 'junit:junit:+'
    }
 

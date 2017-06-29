@@ -5,12 +5,14 @@ import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.Database;
 import com.microsoft.azure.documentdb.Document;
 import com.microsoft.azure.documentdb.DocumentClient;
+import com.microsoft.azure.documentdb.DocumentClientException;
 import com.microsoft.azure.documentdb.DocumentCollection;
 import com.microsoft.azure.documentdb.FeedOptions;
-import com.wizzardo.tools.json.JsonObject;
-import com.wizzardo.tools.json.JsonTools;
+import com.microsoft.azure.documentdb.PartitionKey;
+import com.microsoft.azure.documentdb.RequestOptions;
 
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class DocumentDbInterface {
@@ -38,7 +40,7 @@ public class DocumentDbInterface {
         .toList().get(0);
   }
 
-  public JsonObject[] queryCollection(final String query) {
+  public List<Document> queryCollection(final String query) {
 
     FeedOptions options = new FeedOptions();
     options.setEnableCrossPartitionQuery(true);
@@ -46,14 +48,21 @@ public class DocumentDbInterface {
                                                                  options).getQueryIterable()
         .toList();
 
-    JsonObject[] retrievedObjs = new JsonObject[retrievedDocs.size()];
+    return retrievedDocs;
+  }
 
-    int index = 0;
-    for (Document doc : retrievedDocs) {
+  public void replaceDocument(final Document document, final Object key) {
 
-      retrievedObjs[index++] = JsonTools.parse(doc.toString()).asJsonObject();
+    try {
+
+      PartitionKey partitionKey = new PartitionKey(key);
+      RequestOptions options = new RequestOptions();
+      options.setPartitionKey(partitionKey);
+      documentClient.replaceDocument(document, options);
+
+    } catch (DocumentClientException e) {
+
+      LOGGER.log(Level.SEVERE, e.toString(), e);
     }
-
-    return retrievedObjs;
   }
 }
