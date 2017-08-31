@@ -70,6 +70,24 @@ public class HBaseInterface {
     }
   }
 
+  public static ResultScanner searchByRange(final Table table, final String fromRow,
+                                            final String toRow) {
+
+    final Scan rangeScan = new Scan(Bytes.toBytes(fromRow), Bytes.toBytes(toRow));
+
+    final ResultScanner results;
+    try {
+
+      results = table.getScanner(rangeScan);
+
+      return results;
+    } catch (IOException exception) {
+
+      LOGGER.log(Level.SEVERE, exception.toString(), exception);
+      return null;
+    }
+  }
+
   public static void closeResultScanner(ResultScanner results) {
 
     results.close();
