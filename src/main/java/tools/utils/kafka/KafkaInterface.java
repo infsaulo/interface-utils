@@ -8,9 +8,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -63,7 +61,7 @@ public class KafkaInterface {
         producer.flush();
     }
 
-    public String consumeMessage(final String topic, final int partition, final Long offset) {
+    public Map<String, Object> consumeMessage(final String topic, final int partition, final Long offset) {
 
         final TopicPartition topicPartition = new TopicPartition(topic, partition);
         consumer.assign(Arrays.asList(topicPartition));
@@ -81,12 +79,19 @@ public class KafkaInterface {
 
         final List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
 
+        final Map<String, Object> resultMap = new HashMap<>();
         try {
 
             final ConsumerRecord<String, String> record = partitionRecords.get(0);
             final String message = record.value();
+            final String key = record.key();
+            final long resultOffset = record.offset();
 
-            return message;
+            resultMap.put("msg", message);
+            resultMap.put("key", key);
+            resultMap.put("offset", resultOffset);
+
+            return resultMap;
         } catch (IndexOutOfBoundsException ex) {
 
             LOGGER.log(Level.WARNING, ex.toString(), ex);
