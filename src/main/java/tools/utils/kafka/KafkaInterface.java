@@ -1,41 +1,102 @@
 package tools.utils.kafka;
 
 
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.TopicPartition;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class KafkaInterface {
 
-  private static final Logger LOGGER = Logger.getLogger(KafkaInterface.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(KafkaInterface.class.getName());
 
-  final KafkaProducer<String, String> producer;
+    private static final long CONSUMER_POLL_TIMEOUT = 6000;
 
-  public KafkaInterface(String kafkaUrlProducer) {
+    private final KafkaProducer<String, String> producer;
 
-    final Properties props = new Properties();
-    props.put("bootstrap.servers", kafkaUrlProducer);
-    props.put("acks", "all");
-    props.put("retries", 0);
-    props.put("buffer.memory", 33554432);
-    props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-    props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+    private KafkaConsumer<String, String> consumer;
 
-    producer = new KafkaProducer<>(props);
-  }
+    public KafkaInterface(final String kafkaUrl) {
 
-  public void sendMessage(final String key, final String topic, final String msg) {
+        final Properties producerProps = new Properties();
+        producerProps.put("bootstrap.servers", kafkaUrl);
+        producerProps.put("acks", "all");
+        producerProps.put("retries", 0);
+        producerProps.put("buffer.memory", 33554432);
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
 
-    final ProducerRecord<String, String> recordMsg = new ProducerRecord<>(topic, key, msg);
+        producer = new KafkaProducer<>(producerProps);
 
-    producer.send(recordMsg);
-    producer.flush();
-  }
+        consumer = null;
+    }
 
-  public void closeInterface() {
+    public KafkaInterface(final String kafkaUrl, final String groupId) {
 
-    producer.close();
-  }
+        this(kafkaUrl);
+
+        final Properties consumerProps = new Properties();
+        consumerProps.put("bootstrap.servers", kafkaUrl);
+        consumerProps.put("group.id", groupId);
+        consumerProps.put("enable.auto.commit", "false");
+        consumerProps.put("auto.commit.interval.ms", "1000");
+        consumerProps.put("session.timeout.ms", "30000");
+        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+        consumer = new KafkaConsumer<>(consumerProps);
+    }
+
+    public void sendMessage(final String key, final String topic, final String msg) {
+
+        final ProducerRecord<String, String> recordMsg = new ProducerRecord<>(topic, key, msg);
+
+        producer.send(recordMsg);
+        producer.flush();
+    }
+
+    public String consumeMessage(final String topic, final int partition, final Long offset) {
+
+        final TopicPartition topicPartition = new TopicPartition(topic, partition);
+        consumer.assign(Arrays.asList(topicPartition));
+
+        // Consume the first message from the topic
+        if (offset == null) {
+            consumer.seekToBeginning(Arrays.asList(topicPartition));
+
+        } else {
+
+            consumer.seek(topicPartition, offset);
+        }
+
+        final ConsumerRecords<String, String> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+
+        final List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
+
+        try {
+
+            final ConsumerRecord<String, String> record = partitionRecords.get(0);
+            final String message = record.value();
+
+            return message;
+        } catch (IndexOutOfBoundsException ex) {
+
+            LOGGER.log(Level.WARNING, ex.toString(), ex);
+            return null;
+        }
+    }
+
+    public void closeInterface() {
+
+        producer.close();
+        consumer.close();
+    }
 }

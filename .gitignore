@@ -8,3 +8,4 @@
 /bin
 /secrets
 /src/test/java/tools/utils/hbase
+/*.iml
