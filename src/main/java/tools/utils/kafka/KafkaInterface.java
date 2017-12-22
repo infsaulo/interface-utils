@@ -107,25 +107,29 @@ public class KafkaInterface {
 
         // Consume the first message from the topic
         if (offset == null) {
-            consumer.seekToBeginning(Arrays.asList(topicPartition));
 
+            consumer.seekToBeginning(Arrays.asList(topicPartition));
         } else {
 
             consumer.seek(topicPartition, offset);
         }
 
-        final ConsumerRecords<String, String> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
-
-        final List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
-
         final List<Map<String, Object>> resultMapList = new ArrayList<>();
+        int index = 0;
 
+        while (index < amountMessages) {
 
-        for (int index = 0; index < amountMessages; index++) {
+            final ConsumerRecords<String, String> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
 
-            try {
+            final List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
 
-                final ConsumerRecord<String, String> record = partitionRecords.get(index);
+            for (final ConsumerRecord<String, String> record : partitionRecords) {
+
+                if (index >= amountMessages) {
+
+                    break;
+                }
+
                 final String message = record.value();
                 final String key = record.key();
                 final long resultOffset = record.offset();
@@ -136,11 +140,8 @@ public class KafkaInterface {
                 resultMap.put("offset", resultOffset);
 
                 resultMapList.add(resultMap);
-            } catch (IndexOutOfBoundsException ex) {
 
-                LOGGER.log(Level.WARNING, ex.toString() + "\n Non-existent offset: "
-                        + Long.valueOf(offset + index).toString(), ex);
-                break;
+                index++;
             }
         }
 
