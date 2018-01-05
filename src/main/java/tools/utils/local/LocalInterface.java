@@ -1,53 +1,92 @@
 package tools.utils.local;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import com.google.common.base.Charsets;
+
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public final class LocalInterface {
 
-  private static final Logger LOGGER = Logger.getLogger(LocalInterface.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LocalInterface.class.getName());
 
-  private Writer writer;
+    private Writer writer;
 
-  public LocalInterface(final String filePath, final boolean append) throws IOException {
+    private BufferedReader reader;
 
-    try {
+    public LocalInterface(final String filePath) {
 
-      writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
-          .UTF_8);
-    } catch (IOException e) {
+        try {
 
-      LOGGER.log(Level.SEVERE, e.toString(), e);
+            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
+        } catch (FileNotFoundException ex) {
+
+            LOGGER.log(Level.SEVERE, ex.toString(), ex);
+        }
+
     }
-  }
 
-  public void writeToFile(String content) {
+    public LocalInterface(final String filePath, final boolean append) throws IOException {
 
-    synchronized (writer) {
-      try {
+        try {
 
-        writer.write(content);
-        writer.flush();
-      } catch (IOException e) {
+            writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
+                    .UTF_8);
+        } catch (IOException e) {
 
-        LOGGER.log(Level.SEVERE, e.toString(), e);
-      }
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        }
     }
-  }
 
-  public void closeInterface() {
+    public String readLineFile() {
 
-    try {
+        try {
 
-      writer.close();
-    } catch (IOException e) {
+            final String line = reader.readLine();
 
-      LOGGER.log(Level.SEVERE, e.toString(), e);
+            return line;
+        } catch (IOException ex) {
+
+            LOGGER.log(Level.SEVERE, ex.toString(), ex);
+
+            return null;
+        }
     }
-  }
+
+    public void writeToFile(String content) {
+
+        synchronized (writer) {
+            try {
+
+                writer.write(content);
+                writer.flush();
+            } catch (IOException e) {
+
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+            }
+        }
+    }
+
+    public void closeReaderInterface() {
+
+        try {
+
+            reader.close();
+        } catch (IOException e) {
+
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        }
+    }
+
+    public void closeInterface() {
+
+        try {
+
+            writer.close();
+        } catch (IOException e) {
+
+            LOGGER.log(Level.SEVERE, e.toString(), e);
+        }
+    }
 }
