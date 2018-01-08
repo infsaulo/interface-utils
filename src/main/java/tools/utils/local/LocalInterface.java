@@ -41,16 +41,19 @@ public final class LocalInterface {
 
     public String readLineFile() {
 
-        try {
+        synchronized (reader) {
 
-            final String line = reader.readLine();
+            try {
 
-            return line;
-        } catch (IOException ex) {
+                final String line = reader.readLine();
 
-            LOGGER.log(Level.SEVERE, ex.toString(), ex);
+                return line;
+            } catch (IOException ex) {
 
-            return null;
+                LOGGER.log(Level.SEVERE, ex.toString(), ex);
+
+                return null;
+            }
         }
     }
 
