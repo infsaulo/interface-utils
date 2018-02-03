@@ -102,6 +102,7 @@ public class KafkaInterface {
     public Map<String, Object> consumeLastMessage(final String topic, final int partition) {
 
         final TopicPartition topicPartition = new TopicPartition(topic, partition);
+        consumer.assign(Arrays.asList(topicPartition));
 
         consumer.seekToEnd(Arrays.asList(topicPartition));
 
