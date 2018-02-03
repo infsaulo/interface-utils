@@ -99,6 +99,35 @@ public class KafkaInterface {
         }
     }
 
+    public Map<String, Object> consumeLastMessage(final String topic, final int partition) {
+
+        final TopicPartition topicPartition = new TopicPartition(topic, partition);
+
+        consumer.seekToEnd(Arrays.asList(topicPartition));
+
+        final ConsumerRecords<String, String> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+
+        final List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
+
+        final Map<String, Object> resultMap = new HashMap<>();
+        try {
+            final ConsumerRecord<String, String> record = partitionRecords.get(0);
+            final String message = record.value();
+            final String key = record.key();
+            final long resultOffset = record.offset();
+
+            resultMap.put("msg", message);
+            resultMap.put("key", key);
+            resultMap.put("offset", resultOffset);
+
+            return resultMap;
+        } catch (IndexOutOfBoundsException ex) {
+
+            LOGGER.log(Level.WARNING, ex.toString(), ex);
+            return null;
+        }
+    }
+
     public List<Map<String, Object>> consumeMessages(final String topic, final int partition, final Long offset,
                                                      final Long amountMessages) {
 
