@@ -84,6 +84,23 @@ public class HBaseInterface {
         }
     }
 
+    public static Result get(final Table table, final String key) {
+
+        final Get get = new Get(Bytes.toBytes(key));
+
+        final Result result;
+        try {
+
+            result = table.get(get);
+
+            return result;
+        } catch (IOException exception) {
+
+            LOGGER.log(Level.SEVERE, exception.toString(), exception);
+            return null;
+        }
+    }
+
     public static ResultScanner getAll(final Table table) {
 
         final Scan scan = new Scan();
