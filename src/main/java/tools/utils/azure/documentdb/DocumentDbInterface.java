@@ -55,9 +55,9 @@ public class DocumentDbInterface {
 
     try {
 
-      PartitionKey partitionKey = new PartitionKey(key);
+      //PartitionKey partitionKey = new PartitionKey(key);
       RequestOptions options = new RequestOptions();
-      options.setPartitionKey(partitionKey);
+      //options.setPartitionKey(partitionKey);
       documentClient.replaceDocument(document, options);
 
     } catch (DocumentClientException e) {
