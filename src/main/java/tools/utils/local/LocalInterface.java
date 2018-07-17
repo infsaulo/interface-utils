@@ -15,11 +15,14 @@ public final class LocalInterface {
 
     private BufferedReader reader;
 
+    private boolean fileExists;
+
     public LocalInterface(final String filePath) {
 
         try {
 
             reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
+            fileExists = true;
         } catch (FileNotFoundException ex) {
 
             LOGGER.log(Level.SEVERE, ex.toString(), ex);
@@ -33,6 +36,7 @@ public final class LocalInterface {
 
             writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
                     .UTF_8);
+            fileExists = true;
         } catch (IOException e) {
 
             LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -91,5 +95,10 @@ public final class LocalInterface {
 
             LOGGER.log(Level.SEVERE, e.toString(), e);
         }
+    }
+
+    public boolean isFileExists() {
+        
+        return fileExists;
     }
 }
