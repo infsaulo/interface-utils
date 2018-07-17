@@ -6,7 +6,7 @@ buildscript {
   }
   dependencies {
     classpath "pl.allegro.tech.build:axion-release-plugin:+"
-    classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:+"
+    classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
   }
 }
 
