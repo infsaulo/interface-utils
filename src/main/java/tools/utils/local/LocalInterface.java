@@ -98,7 +98,7 @@ public final class LocalInterface {
     }
 
     public boolean isFileExists() {
-        
+
         return fileExists;
     }
 }
