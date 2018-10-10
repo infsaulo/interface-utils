@@ -21,7 +21,7 @@ public class WebRequester {
 
     private static final Logger LOGGER = Logger.getLogger(WebRequester.class.getName());
 
-    public static String doGet(final String urlLink, final Map<String, String> headers,
+    public static String doGet(final String urlLink, final Map<String, Object> headers,
                                final boolean trimFirstLine) throws IOException {
 
         final URL url = new URL(urlLink);
@@ -40,12 +40,12 @@ public class WebRequester {
         if (headers != null) {
             final HttpHeaders headersHttp = new HttpHeaders();
 
-            final Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
+            final Iterator<Map.Entry<String, Object>> it = headers.entrySet().iterator();
             while (it.hasNext()) {
-                final Map.Entry<String, String> pair = it.next();
+                final Map.Entry<String, Object> pair = it.next();
                 if (pair.getKey().equals("Authorization")) {
 
-                    headersHttp.setAuthorization(pair.getValue());
+                    headersHttp.setAuthorization(pair.getValue().toString());
                 } else {
 
                     headersHttp.set(pair.getKey(), pair.getValue());
@@ -62,7 +62,7 @@ public class WebRequester {
     }
 
     public static String doPost(final String urlLink, final String payload,
-                                final Map<String, String> headers, final boolean trimFirstLine) throws IOException {
+                                final Map<String, Object> headers, final boolean trimFirstLine) throws IOException {
 
         final URL url = new URL(urlLink);
 
@@ -78,10 +78,10 @@ public class WebRequester {
         request.setUnsuccessfulResponseHandler(new HttpBackOffUnsuccessfulResponseHandler(backOff));
 
         if (headers != null) {
-            final Iterator<Map.Entry<String, String>> it = headers.entrySet().iterator();
+            final Iterator<Map.Entry<String, Object>> it = headers.entrySet().iterator();
             final HttpHeaders httpHeaders = new HttpHeaders();
             while (it.hasNext()) {
-                final Map.Entry<String, String> pair = it.next();
+                final Map.Entry<String, Object> pair = it.next();
                 httpHeaders.set(pair.getKey(), pair.getValue());
             }
             request.setHeaders(httpHeaders);
