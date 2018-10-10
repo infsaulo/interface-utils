@@ -70,8 +70,8 @@ public class WebRequester {
         final HttpRequestFactory factory = transport.createRequestFactory();
         final GenericUrl urlGeneric = new GenericUrl(url);
 
-        final HttpContent httpContentPayload = new JsonHttpContent(new JacksonFactory(), payload);
-        final HttpRequest request = factory.buildPostRequest(urlGeneric, httpContentPayload);
+        //final HttpContent httpContentPayload = new JsonHttpContent(new JacksonFactory(), payload);
+        final HttpRequest request = factory.buildPostRequest(urlGeneric, ByteArrayContent.fromString(null, payload));
         final ExponentialBackOff backOff =
                 new ExponentialBackOff.Builder().setInitialIntervalMillis(2000).setMaxIntervalMillis(60000)
                         .setMaxElapsedTimeMillis(600000).setMultiplier(1.5).setRandomizationFactor(0.5).build();
