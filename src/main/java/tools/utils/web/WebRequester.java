@@ -2,8 +2,6 @@ package tools.utils.web;
 
 import com.google.api.client.http.*;
 import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.http.json.JsonHttpContent;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.Charsets;
 import com.google.api.client.util.ExponentialBackOff;
 
@@ -35,6 +33,7 @@ public class WebRequester {
                 new ExponentialBackOff.Builder().setInitialIntervalMillis(2000).setMaxIntervalMillis(60000)
                         .setMaxElapsedTimeMillis(600000).setMultiplier(1.5).setRandomizationFactor(0.5).build();
         request.setUnsuccessfulResponseHandler(new HttpBackOffUnsuccessfulResponseHandler(backOff));
+        request.setIOExceptionHandler(new HttpBackOffIOExceptionHandler(backOff));
 
 
         if (headers != null) {
@@ -69,13 +68,13 @@ public class WebRequester {
         final HttpTransport transport = new NetHttpTransport();
         final HttpRequestFactory factory = transport.createRequestFactory();
         final GenericUrl urlGeneric = new GenericUrl(url);
-
-        //final HttpContent httpContentPayload = new JsonHttpContent(new JacksonFactory(), payload);
+        
         final HttpRequest request = factory.buildPostRequest(urlGeneric, ByteArrayContent.fromString(null, payload));
         final ExponentialBackOff backOff =
                 new ExponentialBackOff.Builder().setInitialIntervalMillis(2000).setMaxIntervalMillis(60000)
                         .setMaxElapsedTimeMillis(600000).setMultiplier(1.5).setRandomizationFactor(0.5).build();
         request.setUnsuccessfulResponseHandler(new HttpBackOffUnsuccessfulResponseHandler(backOff));
+        request.setIOExceptionHandler(new HttpBackOffIOExceptionHandler(backOff));
 
         if (headers != null) {
             final Iterator<Map.Entry<String, Object>> it = headers.entrySet().iterator();
