@@ -68,7 +68,7 @@ public class WebRequester {
         final HttpTransport transport = new NetHttpTransport();
         final HttpRequestFactory factory = transport.createRequestFactory();
         final GenericUrl urlGeneric = new GenericUrl(url);
-        
+
         final HttpRequest request = factory.buildPostRequest(urlGeneric, ByteArrayContent.fromString(null, payload));
         final ExponentialBackOff backOff =
                 new ExponentialBackOff.Builder().setInitialIntervalMillis(2000).setMaxIntervalMillis(60000)
