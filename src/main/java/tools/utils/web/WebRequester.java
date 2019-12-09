@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.ConnectException;
 import java.net.URL;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class WebRequester {
 
             final Iterator it = headers.entrySet().iterator();
             while (it.hasNext()) {
-                final Map.Entry<String, Object> pair = (Map.Entry<String, Object>)it.next();
+                final Map.Entry<String, Object> pair = (Map.Entry<String, Object>) it.next();
                 if (pair.getKey().equals("Authorization")) {
 
                     headersHttp.setAuthorization(pair.getValue().toString());
@@ -86,10 +87,47 @@ public class WebRequester {
             request.setHeaders(httpHeaders);
         }
 
-        final HttpResponse responseHttp = request.execute();
+        // Retry in case of ConnectionException
+        int numTries = 0;
+        int maxAmountTries = 15;
 
+        HttpResponse responseHttp = null;
 
-        final String response = readFromInputStream(responseHttp.getContent(), trimFirstLine);
+        while (numTries < maxAmountTries) {
+
+            try {
+
+                responseHttp = request.execute();
+            } catch (ConnectException ex) {
+
+                if (numTries > maxAmountTries) {
+
+                    throw ex;
+                }
+
+                LOGGER.log(Level.SEVERE, "Trying request time " + Integer.toString(numTries) + ":\n"
+                        + ex.toString(), ex);
+
+                numTries++;
+
+                try {
+
+                    Thread.sleep((long) (Math.min(3600000, 1000 * Math.pow(2, numTries))));
+                    continue;
+                } catch (InterruptedException interruptEx) {
+
+                    LOGGER.log(Level.SEVERE, ex.toString(), ex);
+                }
+            }
+            break;
+        }
+
+        String response = null;
+
+        if (responseHttp != null) {
+
+            response = readFromInputStream(responseHttp.getContent(), trimFirstLine);
+        }
 
         return response;
     }
