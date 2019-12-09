@@ -1,13 +1,13 @@
 buildscript {
-  repositories {
-    maven {
-      url "https://plugins.gradle.org/m2/"
+    repositories {
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
-  }
-  dependencies {
-    classpath "pl.allegro.tech.build:axion-release-plugin:+"
-    classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
-  }
+    dependencies {
+        classpath "pl.allegro.tech.build:axion-release-plugin:+"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
+    }
 }
 
 apply plugin: 'java'
@@ -20,17 +20,17 @@ apply plugin: 'pl.allegro.tech.build.axion-release'
 apply plugin: 'com.jfrog.bintray'
 
 scmVersion {
-	tag {
-		prefix = project.name
-	}
-	
-	repository {
-		customUsername = "$System.env.AXION_RELEASE_GITHUB_TOKEN"
-		customPassword = ""
-		pushTagsOnly = true
-	}
-	
-	versionCreator 'versionWithBranch'
+    tag {
+        prefix = project.name
+    }
+
+    repository {
+        customUsername = "$System.env.AXION_RELEASE_GITHUB_TOKEN"
+        customPassword = ""
+        pushTagsOnly = true
+    }
+
+    versionCreator 'versionWithBranch'
 }
 
 project.group = "com.toolbox"
@@ -38,100 +38,107 @@ project.version = scmVersion.version
 
 sourceCompatibility = 1.8
 
-   configurations.all {
-      resolutionStrategy {
+configurations.all {
+    resolutionStrategy {
 
-         cacheDynamicVersionsFor 0, 'minutes'
-         cacheChangingModulesFor 0, 'minutes'
+        cacheDynamicVersionsFor 0, 'minutes'
+        cacheChangingModulesFor 0, 'minutes'
 
-         eachDependency { DependencyResolveDetails details ->
+        eachDependency { DependencyResolveDetails details ->
             if (details.requested.name == 'slf4j-log4j12') {
-               details.useTarget group: 'org.slf4j', name: 'log4j-over-slf4j', version: '+'
+                details.useTarget group: 'org.slf4j', name: 'log4j-over-slf4j', version: '+'
             }
-         }
-      }
-   }
+        }
+    }
+}
 
-   repositories {
-       mavenCentral()
-      maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
-      jcenter()
-       maven { url "http://conjars.org/repo"}
-   }
+repositories {
+    mavenCentral()
+    maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
+    jcenter()
+    maven { url "http://conjars.org/repo" }
+}
 
-   dependencies {
+dependencies {
 
-       compile 'com.google.apis:google-api-services-storage:+'
-       compile 'com.microsoft.azure:azure-storage:+'
-       compile 'com.microsoft.azure:azure-documentdb:+'
-       compile 'com.wizzardo.tools:tools:+'
-       compile 'org.zeromq:jeromq:+'
-       compile 'org.apache.kafka:kafka-clients:+'
-       compile 'org.apache.hbase:hbase-client:1.1.2'
-       compile 'org.apache.phoenix:phoenix-core:4.4.0-HBase-1.1'
+    compile 'com.google.apis:google-api-services-storage:+'
+    compile 'com.microsoft.azure:azure-storage:+'
+    compile 'com.microsoft.azure:azure-documentdb:+'
+    compile 'com.wizzardo.tools:tools:+'
+    compile 'org.zeromq:jeromq:+'
+    compile 'org.apache.kafka:kafka-clients:+'
+    compile 'org.apache.hbase:hbase-client:1.1.2'
+    compile 'org.apache.phoenix:phoenix-core:4.4.0-HBase-1.1'
 
-       testCompile 'junit:junit:+'
-   }
+    testCompile 'junit:junit:+'
+}
+
+jar {
+    zip64 = true
+    doFirst {
+        from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
+}
 
 
-   task sourcesJar(type: Jar, dependsOn: classes) {
-     from sourceSets.main.allSource
-     classifier = 'sources'
-   }
+task sourcesJar(type: Jar, dependsOn: classes) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
 
-   task javadocJar(type: Jar, dependsOn:javadoc) {
-     from javadoc.destinationDir
-     classifier 'javadoc'
-   }
-   
-   publishing {
-   publications {
-      mavenJava( MavenPublication ) {
-         from components.java
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    from javadoc.destinationDir
+    classifier 'javadoc'
+}
 
-         artifact sourcesJar
-         artifact javadocJar
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
         }
     }
 }
 
 
-
-   artifacts {
-     archives sourcesJar
-     archives javadocJar
-   }
-   
-   bintray {
-	user = "$System.env.BINTRAY_USER"
-	key = "$System.env.BINTRAY_API_KEY"
-
-	publications = ['mavenJava']
-
-	pkg {
-		repo = 'tools'
-		name = project.name
-		desc = 'Interface utils to do web requests and Google Cloud Storage'
-		websiteUrl = 'https://github.com/infsaulo/' + project.name
-		vcsUrl = 'https://github.com/infsaulo/' + project.name
-		issueTrackerUrl = 'https://github.com/infsaulo/' + project.name + '/issues'
-		licenses = ["Apache-2.0"]
-		publish = true
-		version {
-			name = project.version
-			vcsTag = scmVersion.tag.prefix + '-' + project.version
-			gpg {
-				sign = true
-				passphrase = "$System.env.BINTRAY_GPG_PASSPHRASE"
-			}
-		}
-	}
+artifacts {
+    archives sourcesJar
+    archives javadocJar
 }
-  
-bintrayUpload.onlyIf { !project.version.endsWith( 'SNAPSHOT' ) } 
+
+bintray {
+    user = "$System.env.BINTRAY_USER"
+    key = "$System.env.BINTRAY_API_KEY"
+
+    publications = ['mavenJava']
+
+    pkg {
+        repo = 'tools'
+        name = project.name
+        desc = 'Interface utils to do web requests and Google Cloud Storage'
+        websiteUrl = 'https://github.com/infsaulo/' + project.name
+        vcsUrl = 'https://github.com/infsaulo/' + project.name
+        issueTrackerUrl = 'https://github.com/infsaulo/' + project.name + '/issues'
+        licenses = ["Apache-2.0"]
+        publish = true
+        version {
+            name = project.version
+            vcsTag = scmVersion.tag.prefix + '-' + project.version
+            gpg {
+                sign = true
+                passphrase = "$System.env.BINTRAY_GPG_PASSPHRASE"
+            }
+        }
+    }
+}
+
+bintrayUpload.onlyIf { !project.version.endsWith('SNAPSHOT') }
 
 findbugs {
-	toolVersion = "+"
+    toolVersion = "+"
     reportsDir = file("$project.buildDir/findbugsReports")
     effort = "max"
     reportLevel = "low"
@@ -139,44 +146,44 @@ findbugs {
     excludeFilter = file("${rootProject.projectDir}/findbugs-exclude.xml")
 }
 
-   pmd {
-      toolVersion = "+"
-      reportsDir = file("$project.buildDir/pmdReports")
-      ruleSets = [
-         "basic",
-         "braces",
-         "naming",
-         "design",
-         "coupling",
-         "clone",
-         "codesize",
-         "finalizers",
-         "strings",
-         "typeresolution",
-         "strictexception",
-         "logging-java"
-      ]
-      ignoreFailures = false
-      sourceSets = [sourceSets.main]
-   }
+pmd {
+    toolVersion = "+"
+    reportsDir = file("$project.buildDir/pmdReports")
+    ruleSets = [
+            "basic",
+            "braces",
+            "naming",
+            "design",
+            "coupling",
+            "clone",
+            "codesize",
+            "finalizers",
+            "strings",
+            "typeresolution",
+            "strictexception",
+            "logging-java"
+    ]
+    ignoreFailures = false
+    sourceSets = [sourceSets.main]
+}
 
-   tasks.withType(FindBugs) {
-      reports {
-         xml.enabled = false
-         html.enabled = true
-      }
-   }
+tasks.withType(FindBugs) {
+    reports {
+        xml.enabled = false
+        html.enabled = true
+    }
+}
 
-   checkstyle {
-      config = resources.text.fromFile("${rootProject.projectDir}/checkstyle/google_checks.xml")
-      configProperties = [samedir: "${rootProject.projectDir}/checkstyle"]
-      reportsDir = file("$rootProject.buildDir/checkstyleReports")
-      toolVersion = "7.6.1"
-      ignoreFailures = false
-   }
-   
-   sourceSets {
+checkstyle {
+    config = resources.text.fromFile("${rootProject.projectDir}/checkstyle/google_checks.xml")
+    configProperties = [samedir: "${rootProject.projectDir}/checkstyle"]
+    reportsDir = file("$rootProject.buildDir/checkstyleReports")
+    toolVersion = "7.6.1"
+    ignoreFailures = false
+}
+
+sourceSets {
     main {
-       output.resourcesDir = "build"
-     }
-  }
+        output.resourcesDir = "build"
+    }
+}
