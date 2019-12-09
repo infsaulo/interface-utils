@@ -171,7 +171,7 @@ findbugs {
       config = resources.text.fromFile("${rootProject.projectDir}/checkstyle/google_checks.xml")
       configProperties = [samedir: "${rootProject.projectDir}/checkstyle"]
       reportsDir = file("$rootProject.buildDir/checkstyleReports")
-      toolVersion = "+"
+      toolVersion = "7.6.1"
       ignoreFailures = false
    }
    
