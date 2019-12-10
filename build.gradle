@@ -124,6 +124,7 @@ bintray {
         issueTrackerUrl = 'https://github.com/infsaulo/' + project.name + '/issues'
         licenses = ["Apache-2.0"]
         publish = true
+        override = true
         version {
             name = project.version
             vcsTag = scmVersion.tag.prefix + '-' + project.version
