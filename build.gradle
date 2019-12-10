@@ -6,7 +6,7 @@ buildscript {
     }
     dependencies {
         classpath "pl.allegro.tech.build:axion-release-plugin:+"
-        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3"
+        classpath "com.jfrog.bintray.gradle:gradle-bintray-plugin:+"
     }
 }
 
@@ -124,7 +124,6 @@ bintray {
         issueTrackerUrl = 'https://github.com/infsaulo/' + project.name + '/issues'
         licenses = ["Apache-2.0"]
         publish = true
-        override = true
         version {
             name = project.version
             vcsTag = scmVersion.tag.prefix + '-' + project.version
