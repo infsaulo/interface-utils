@@ -15,27 +15,53 @@ public final class LocalInterface {
 
     private BufferedReader reader;
 
+    private ObjectOutputStream objectWriter;
+
+    private ObjectInputStream objectReader;
+
     private boolean fileExists;
 
-    public LocalInterface(final String filePath) {
+    private boolean isObject;
+
+    public LocalInterface(final String filePath, final boolean object) {
 
         try {
 
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
+            if (object) {
+
+                objectReader = new ObjectInputStream(new FileInputStream(filePath));
+                isObject = true;
+            } else {
+
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
+                isObject = false;
+
+            }
+
             fileExists = true;
-        } catch (FileNotFoundException ex) {
+        } catch (IOException ex) {
 
             LOGGER.log(Level.SEVERE, ex.toString(), ex);
         }
 
     }
 
-    public LocalInterface(final String filePath, final boolean append) throws IOException {
+    public LocalInterface(final String filePath, final boolean append, final boolean object) throws IOException {
+
 
         try {
 
-            writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
-                    .UTF_8);
+            if (object) {
+
+                objectWriter = new ObjectOutputStream(new FileOutputStream(filePath));
+                isObject = true;
+            } else {
+
+                writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
+                        .UTF_8);
+                isObject = false;
+
+            }
             fileExists = true;
         } catch (IOException e) {
 
@@ -43,34 +69,71 @@ public final class LocalInterface {
         }
     }
 
-    public String readLineFile() {
+    public Object readLineFile() {
 
-        synchronized (reader) {
+        if (isObject) {
 
             try {
+                final Object obj = objectReader.readObject();
 
-                final String line = reader.readLine();
-
-                return line;
+                return obj;
             } catch (IOException ex) {
 
                 LOGGER.log(Level.SEVERE, ex.toString(), ex);
 
                 return null;
+            } catch (ClassNotFoundException ex) {
+
+                LOGGER.log(Level.SEVERE, ex.toString(), ex);
+
+                return null;
             }
+        } else {
+
+            synchronized (reader) {
+
+                try {
+
+                    final String line = reader.readLine();
+
+                    return line;
+                } catch (IOException ex) {
+
+                    LOGGER.log(Level.SEVERE, ex.toString(), ex);
+
+                    return null;
+                }
+            }
+
+
         }
     }
 
-    public void writeToFile(String content) {
+    public void writeToFile(Object content) {
 
-        synchronized (writer) {
-            try {
+        if (isObject) {
 
-                writer.write(content);
-                writer.flush();
-            } catch (IOException e) {
+            synchronized (objectWriter) {
+                try {
 
-                LOGGER.log(Level.SEVERE, e.toString(), e);
+                    objectWriter.writeObject(content);
+                    objectWriter.flush();
+                } catch (IOException e) {
+
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                }
+            }
+        } else {
+
+            synchronized (writer) {
+                try {
+
+                    writer.write((String) content);
+                    writer.flush();
+                } catch (IOException e) {
+
+                    LOGGER.log(Level.SEVERE, e.toString(), e);
+                }
             }
         }
     }
@@ -79,7 +142,12 @@ public final class LocalInterface {
 
         try {
 
-            reader.close();
+            if (isObject) {
+
+                objectReader.close();
+            } else {
+                reader.close();
+            }
         } catch (IOException e) {
 
             LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -90,7 +158,13 @@ public final class LocalInterface {
 
         try {
 
-            writer.close();
+            if (isObject) {
+
+                objectWriter.close();
+            } else {
+
+                writer.close();
+            }
         } catch (IOException e) {
 
             LOGGER.log(Level.SEVERE, e.toString(), e);
