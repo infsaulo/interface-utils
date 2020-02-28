@@ -58,6 +58,14 @@ public class KafkaInterface {
         producer.flush();
     }
 
+    public void sendMessage(final String key, final String topic, final String msg, final int partition) {
+
+        final ProducerRecord<String, String> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
+
+        producer.send(recordMsg);
+        producer.flush();
+    }
+
     public Map<String, Object> consumeMessage(final String topic, final int partition, final Long offset) {
 
         final TopicPartition topicPartition = new TopicPartition(topic, partition);

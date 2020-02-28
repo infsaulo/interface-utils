@@ -61,7 +61,10 @@ repositories {
 
 dependencies {
 
-    compile 'com.google.apis:google-api-services-storage:+'
+    compile('com.google.apis:google-api-services-storage:+') {
+        
+        exclude module: 'annotation'
+    }
     compile 'com.microsoft.azure:azure-storage:+'
     compile 'com.microsoft.azure:azure-documentdb:+'
     compile 'com.wizzardo.tools:tools:+'
