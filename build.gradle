@@ -62,16 +62,23 @@ repositories {
 dependencies {
 
     compile('com.google.apis:google-api-services-storage:+') {
-        
+
         exclude module: 'annotation'
     }
+    compile 'org.apache.avro:avro:+'
     compile 'com.microsoft.azure:azure-storage:+'
     compile 'com.microsoft.azure:azure-documentdb:+'
     compile 'com.wizzardo.tools:tools:+'
     compile 'org.zeromq:jeromq:+'
     compile 'org.apache.kafka:kafka-clients:+'
-    compile 'org.apache.hbase:hbase-client:1.1.2'
-    compile 'org.apache.phoenix:phoenix-core:4.4.0-HBase-1.1'
+    compile('org.apache.hbase:hbase-client:1.1.2') {
+        
+        exclude module: 'avro'
+    }
+    compile('org.apache.phoenix:phoenix-core:4.4.0-HBase-1.1') {
+        
+        exclude module: 'avro'
+    }
 
     testCompile 'junit:junit:+'
 }
