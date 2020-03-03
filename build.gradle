@@ -33,8 +33,8 @@ scmVersion {
     versionCreator 'versionWithBranch'
 }
 
-project.group = "com.toolbox"
-project.version = scmVersion.version
+group 'com.toolbox'
+version scmVersion.version
 
 sourceCompatibility = 1.8
 
@@ -72,11 +72,11 @@ dependencies {
     compile 'org.zeromq:jeromq:+'
     compile 'org.apache.kafka:kafka-clients:+'
     compile('org.apache.hbase:hbase-client:1.1.2') {
-        
+
         exclude module: 'avro'
     }
     compile('org.apache.phoenix:phoenix-core:4.4.0-HBase-1.1') {
-        
+
         exclude module: 'avro'
     }
 
@@ -84,13 +84,12 @@ dependencies {
 }
 
 jar {
-    zip64 = true
+    zip64 true
     doFirst {
         from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
     }
     exclude 'META-INF/*.RSA', 'META-INF/*.SF', 'META-INF/*.DSA'
 }
-
 
 task sourcesJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
@@ -112,7 +111,6 @@ publishing {
         }
     }
 }
-
 
 artifacts {
     archives sourcesJar
@@ -190,10 +188,4 @@ checkstyle {
     reportsDir = file("$rootProject.buildDir/checkstyleReports")
     toolVersion = "7.6.1"
     ignoreFailures = false
-}
-
-sourceSets {
-    main {
-        output.resourcesDir = "build"
-    }
 }
