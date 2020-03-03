@@ -18,9 +18,9 @@ public class KafkaByteInterface {
 
     private static final long CONSUMER_POLL_TIMEOUT = 6000;
 
-    private final KafkaProducer<String, Byte[]> producer;
+    private final KafkaProducer<String, byte[]> producer;
 
-    private KafkaConsumer<String, Byte[]> consumer;
+    private KafkaConsumer<String, byte[]> consumer;
 
     public KafkaByteInterface(final String kafkaUrl) {
 
@@ -50,17 +50,17 @@ public class KafkaByteInterface {
         consumer = new KafkaConsumer<>(consumerProps);
     }
 
-    public void sendMessage(final String key, final String topic, final Byte[] msg) {
+    public void sendMessage(final String key, final String topic, final byte[] msg) {
 
-        final ProducerRecord<String, Byte[]> recordMsg = new ProducerRecord<>(topic, key, msg);
+        final ProducerRecord<String, byte[]> recordMsg = new ProducerRecord<>(topic, key, msg);
 
         producer.send(recordMsg);
         producer.flush();
     }
 
-    public void sendMessage(final String key, final String topic, final Byte[] msg, final int partition) {
+    public void sendMessage(final String key, final String topic, final byte[] msg, final int partition) {
 
-        final ProducerRecord<String, Byte[]> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
+        final ProducerRecord<String, byte[]> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
 
         producer.send(recordMsg);
         producer.flush();
@@ -80,15 +80,15 @@ public class KafkaByteInterface {
             consumer.seek(topicPartition, offset);
         }
 
-        final ConsumerRecords<String, Byte[]> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+        final ConsumerRecords<String, byte[]> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
 
-        final List<ConsumerRecord<String, Byte[]>> partitionRecords = records.records(topicPartition);
+        final List<ConsumerRecord<String, byte[]>> partitionRecords = records.records(topicPartition);
 
         final Map<String, Object> resultMap = new HashMap<>();
         try {
 
-            final ConsumerRecord<String, Byte[]> record = partitionRecords.get(0);
-            final Byte[] message = record.value();
+            final ConsumerRecord<String, byte[]> record = partitionRecords.get(0);
+            final byte[] message = record.value();
             final String key = record.key();
             final long resultOffset = record.offset();
 
@@ -135,18 +135,18 @@ public class KafkaByteInterface {
 
         while (index < amountMessages) {
 
-            final ConsumerRecords<String, Byte[]> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+            final ConsumerRecords<String, byte[]> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
 
-            final List<ConsumerRecord<String, Byte[]>> partitionRecords = records.records(topicPartition);
+            final List<ConsumerRecord<String, byte[]>> partitionRecords = records.records(topicPartition);
 
-            for (final ConsumerRecord<String, Byte[]> record : partitionRecords) {
+            for (final ConsumerRecord<String, byte[]> record : partitionRecords) {
 
                 if (index >= amountMessages) {
 
                     break;
                 }
 
-                final Byte[] message = record.value();
+                final byte[] message = record.value();
                 final String key = record.key();
                 final long resultOffset = record.offset();
 
