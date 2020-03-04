@@ -57,6 +57,7 @@ repositories {
     maven { url "http://oss.sonatype.org/content/repositories/snapshots" }
     jcenter()
     maven { url "http://conjars.org/repo" }
+    maven { url "http://packages.confluent.io/maven"}
 }
 
 dependencies {
@@ -66,6 +67,7 @@ dependencies {
         exclude module: 'annotation'
     }
     compile 'org.apache.avro:avro:+'
+    compile 'io.confluent:kafka-avro-serializer:+'
     compile 'com.microsoft.azure:azure-storage:+'
     compile 'com.microsoft.azure:azure-documentdb:+'
     compile 'com.wizzardo.tools:tools:+'
