@@ -68,8 +68,6 @@ dependencies {
     }
     compile 'org.apache.avro:avro:+'
     compile 'io.confluent:kafka-avro-serializer:+'
-    compile 'com.microsoft.azure:azure-storage:+'
-    compile 'com.microsoft.azure:azure-documentdb:+'
     compile 'com.wizzardo.tools:tools:+'
     compile 'org.zeromq:jeromq:+'
     compile 'org.apache.kafka:kafka-clients:+'
