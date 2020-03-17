@@ -89,7 +89,7 @@ public class WebRequester {
 
         // Retry in case of ConnectionException
         int numTries = 0;
-        int maxAmountTries = 15;
+        int maxAmountTries = 8;
 
         HttpResponse responseHttp = null;
 
@@ -98,7 +98,8 @@ public class WebRequester {
             try {
 
                 responseHttp = request.execute();
-            } catch (ConnectException ex) {
+                break;
+            } catch (IOException ex) {
 
                 if (numTries > maxAmountTries) {
 
@@ -112,14 +113,13 @@ public class WebRequester {
 
                 try {
 
-                    Thread.sleep((long) (Math.min(3600000, 1000 * Math.pow(2, numTries))));
+                    Thread.sleep((long) (Math.min(60000, 1000 * Math.pow(2, numTries))));
                     continue;
                 } catch (InterruptedException interruptEx) {
 
                     LOGGER.log(Level.SEVERE, ex.toString(), ex);
                 }
             }
-            break;
         }
 
         String response = null;
