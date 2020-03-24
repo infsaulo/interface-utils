@@ -16,7 +16,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaAvroConfluentInterface.class.getName());
 
-    private static final long CONSUMER_POLL_TIMEOUT = 60000;
+    private static final long CONSUMER_POLL_TIMEOUT = 6000;
 
     private final KafkaProducer<String, T> producer;
 
@@ -83,7 +83,13 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
             consumer.seek(topicPartition, offset);
         }
 
-        final ConsumerRecords<String, T> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+        ConsumerRecords<String, T> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+
+        while (records.isEmpty()) {
+
+            records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+            LOGGER.log(Level.INFO, "Trying to poll from topic " + topic);
+        }
 
         final List<ConsumerRecord<String, T>> partitionRecords = records.records(topicPartition);
 
