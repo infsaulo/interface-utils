@@ -99,10 +99,12 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
             resultMap.put("key", key);
             resultMap.put("offset", resultOffset);
 
+            consumer.unsubscribe();
             return resultMap;
         } catch (IndexOutOfBoundsException ex) {
 
             LOGGER.log(Level.WARNING, ex.toString(), ex);
+            consumer.unsubscribe();
             return null;
         }
     }
@@ -115,6 +117,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumer.seekToEnd(Arrays.asList(topicPartition));
         final Long lastMsgPosition = consumer.position(topicPartition) - 1;
 
+        consumer.unsubscribe();
         return this.consumeMessage(topic, partition, lastMsgPosition);
     }
 
@@ -164,6 +167,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
             }
         }
 
+        consumer.unsubscribe();
         return resultMapList;
     }
 
