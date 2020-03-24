@@ -48,6 +48,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
+        consumerProps.put("auto.offset.reset", "earliest");
         consumer = new KafkaConsumer<>(consumerProps);
 
         producer = null;
