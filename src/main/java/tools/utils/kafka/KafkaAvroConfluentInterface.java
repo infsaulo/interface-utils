@@ -16,7 +16,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaAvroConfluentInterface.class.getName());
 
-    private static final long CONSUMER_POLL_TIMEOUT = 6000;
+    private static final long CONSUMER_POLL_TIMEOUT = 60000;
 
     private final KafkaProducer<String, T> producer;
 
