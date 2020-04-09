@@ -54,6 +54,22 @@ public class KafkaAvroInterface<T extends SpecificRecordBase> {
         consumer = null;
     }
 
+    public KafkaAvroInterface(final String kafkaUrl, final Class<T> targetType, final String groupId) {
+
+        final Properties consumerProps = new Properties();
+        consumerProps.put("bootstrap.servers", kafkaUrl);
+        consumerProps.put("group.id", groupId);
+        consumerProps.put("enable.auto.commit", "false");
+        consumerProps.put("auto.commit.interval.ms", "1000");
+        consumerProps.put("session.timeout.ms", "30000");
+        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("value.deserializer", "tools.utils.kafka.avro.AvroDeserializer");
+
+        consumer = new KafkaConsumer<>(consumerProps, new StringDeserializer(), new AvroDeserializer<>(targetType));
+
+        producer = null;
+    }
+
     public KafkaAvroInterface(final String kafkaUrl, final Class<T> targetType, final String groupId,
                               final String keystoreFilePath, final String keystorePass, final String truststoreFilePath,
                               final String truststorePass) {
