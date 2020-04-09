@@ -34,9 +34,26 @@ public class KafkaByteInterface {
         consumer = null;
     }
 
+    public KafkaByteInterface(final String kafkaUrl, final String keystoreFilePath, final String keystorePass,
+                              final String truststoreFilePath, final String truststorePass) {
+
+        final Properties producerProps = new Properties();
+        producerProps.put("bootstrap.servers", kafkaUrl);
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
+        producerProps.put("security.protocol", "SSL");
+        producerProps.put("ssl.keystore.location", keystoreFilePath);
+        producerProps.put("ssl.keystore.password", keystorePass);
+        producerProps.put("ssl.truststore.location", truststoreFilePath);
+        producerProps.put("ssl.truststore.password", truststorePass);
+
+        producer = new KafkaProducer<>(producerProps);
+
+        consumer = null;
+    }
+
     public KafkaByteInterface(final String kafkaUrl, final String groupId) {
 
-        this(kafkaUrl);
 
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
@@ -48,6 +65,31 @@ public class KafkaByteInterface {
         consumerProps.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
 
         consumer = new KafkaConsumer<>(consumerProps);
+
+        producer = null;
+    }
+
+    public KafkaByteInterface(final String kafkaUrl, final String groupId, final String keystoreFilePath,
+                              final String keystorePass, final String truststoreFilePath, final String truststorePass) {
+
+
+        final Properties consumerProps = new Properties();
+        consumerProps.put("bootstrap.servers", kafkaUrl);
+        consumerProps.put("group.id", groupId);
+        consumerProps.put("enable.auto.commit", "false");
+        consumerProps.put("auto.commit.interval.ms", "1000");
+        consumerProps.put("session.timeout.ms", "30000");
+        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("value.deserializer", "org.apache.kafka.common.serialization.ByteArrayDeserializer");
+        consumerProps.put("security.protocol", "SSL");
+        consumerProps.put("ssl.keystore.location", keystoreFilePath);
+        consumerProps.put("ssl.keystore.password", keystorePass);
+        consumerProps.put("ssl.truststore.location", truststoreFilePath);
+        consumerProps.put("ssl.truststore.password", truststorePass);
+
+        consumer = new KafkaConsumer<>(consumerProps);
+
+        producer = null;
     }
 
     public void sendMessage(final String key, final String topic, final byte[] msg) {

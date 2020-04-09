@@ -36,9 +36,27 @@ public class KafkaAvroInterface<T extends SpecificRecordBase> {
         consumer = null;
     }
 
-    public KafkaAvroInterface(final String kafkaUrl, final Class<T> targetType, final String groupId) {
+    public KafkaAvroInterface(final String kafkaUrl, final String keystoreFilePath, final String keystorePass,
+                              final String truststoreFilePath, final String truststorePass) {
 
-        this(kafkaUrl);
+        final Properties producerProps = new Properties();
+        producerProps.put("bootstrap.servers", kafkaUrl);
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "tools.utils.kafka.avro.AvroSerializer");
+        producerProps.put("security.protocol", "SSL");
+        producerProps.put("ssl.keystore.location", keystoreFilePath);
+        producerProps.put("ssl.keystore.password", keystorePass);
+        producerProps.put("ssl.truststore.location", truststoreFilePath);
+        producerProps.put("ssl.truststore.password", truststorePass);
+
+        producer = new KafkaProducer<>(producerProps);
+
+        consumer = null;
+    }
+
+    public KafkaAvroInterface(final String kafkaUrl, final Class<T> targetType, final String groupId,
+                              final String keystoreFilePath, final String keystorePass, final String truststoreFilePath,
+                              final String truststorePass) {
 
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
@@ -48,8 +66,15 @@ public class KafkaAvroInterface<T extends SpecificRecordBase> {
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         consumerProps.put("value.deserializer", "tools.utils.kafka.avro.AvroDeserializer");
+        consumerProps.put("security.protocol", "SSL");
+        consumerProps.put("ssl.keystore.location", keystoreFilePath);
+        consumerProps.put("ssl.keystore.password", keystorePass);
+        consumerProps.put("ssl.truststore.location", truststoreFilePath);
+        consumerProps.put("ssl.truststore.password", truststorePass);
 
         consumer = new KafkaConsumer<>(consumerProps, new StringDeserializer(), new AvroDeserializer<>(targetType));
+
+        producer = null;
     }
 
     public void sendMessage(final String key, final String topic, final T msg) {

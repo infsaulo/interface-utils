@@ -7,6 +7,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.config.SslConfigs;
 
 import java.util.*;
 import java.util.logging.Level;
@@ -30,6 +31,25 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("schema.registry.url", registryUrl);
 
+        producer = new KafkaProducer<>(producerProps);
+
+        consumer = null;
+    }
+
+    public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl, final String keystoreFilePath,
+                                       final String keystorePass, final String truststoreFilePath,
+                                       final String truststorePass) {
+
+        final Properties producerProps = new Properties();
+        producerProps.put("bootstrap.servers", kafkaUrl);
+        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
+        producerProps.put("schema.registry.url", registryUrl);
+        producerProps.put("security.protocol", "SSL");
+        producerProps.put("ssl.keystore.location", keystoreFilePath);
+        producerProps.put("ssl.keystore.password", keystorePass);
+        producerProps.put("ssl.truststore.location", truststoreFilePath);
+        producerProps.put("ssl.truststore.password", truststorePass);
 
         producer = new KafkaProducer<>(producerProps);
 
@@ -49,6 +69,33 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
+
+        consumer = new KafkaConsumer<>(consumerProps);
+
+        producer = null;
+    }
+
+    public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
+                                       final String keystoreFilePath, final String keystorePass,
+                                       final String truststoreFilePath, final String truststorePass) {
+
+        final Properties consumerProps = new Properties();
+        consumerProps.put("bootstrap.servers", kafkaUrl);
+        consumerProps.put("group.id", groupId);
+        consumerProps.put("enable.auto.commit", "false");
+        consumerProps.put("auto.commit.interval.ms", "1000");
+        consumerProps.put("session.timeout.ms", "30000");
+        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
+        consumerProps.put("schema.registry.url", registryUrl);
+        consumerProps.put("specific.avro.reader", true);
+        consumerProps.put("auto.offset.reset", "earliest");
+        consumerProps.put("security.protocol", "SSL");
+        consumerProps.put("ssl.keystore.location", keystoreFilePath);
+        consumerProps.put("ssl.keystore.password", keystorePass);
+        consumerProps.put("ssl.truststore.location", truststoreFilePath);
+        consumerProps.put("ssl.truststore.password", truststorePass);
+
         consumer = new KafkaConsumer<>(consumerProps);
 
         producer = null;
