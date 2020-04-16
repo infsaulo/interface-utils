@@ -20,27 +20,34 @@ public final class LocalInterfaceLegacy {
 
     public LocalInterfaceLegacy(final String filePath) {
 
-        try {
+        while (!fileExists) {
 
-            reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
-            fileExists = true;
-        } catch (FileNotFoundException ex) {
+            try {
 
-            LOGGER.log(Level.SEVERE, ex.toString(), ex);
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
+                fileExists = true;
+            } catch (FileNotFoundException ex) {
+
+                LOGGER.log(Level.SEVERE, ex.toString(), ex);
+                continue;
+            }
         }
-
     }
 
     public LocalInterfaceLegacy(final String filePath, final boolean append) throws IOException {
 
-        try {
+        while (!fileExists) {
 
-            writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
-                    .UTF_8);
-            fileExists = true;
-        } catch (IOException e) {
+            try {
 
-            LOGGER.log(Level.SEVERE, e.toString(), e);
+                writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
+                        .UTF_8);
+                fileExists = true;
+            } catch (IOException e) {
+
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                continue;
+            }
         }
     }
 

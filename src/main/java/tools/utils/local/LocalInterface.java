@@ -25,47 +25,52 @@ public final class LocalInterface {
 
     public LocalInterface(final String filePath, final boolean object) {
 
-        try {
+        while (!fileExists) {
 
-            if (object) {
+            try {
 
-                objectReader = new ObjectInputStream(new FileInputStream(filePath));
-                isObject = true;
-            } else {
+                if (object) {
 
-                reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
-                isObject = false;
+                    objectReader = new ObjectInputStream(new FileInputStream(filePath));
+                    isObject = true;
+                } else {
 
+                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
+                    isObject = false;
+                }
+
+                fileExists = true;
+            } catch (IOException ex) {
+
+                LOGGER.log(Level.SEVERE, ex.toString(), ex);
+                continue;
             }
-
-            fileExists = true;
-        } catch (IOException ex) {
-
-            LOGGER.log(Level.SEVERE, ex.toString(), ex);
         }
 
     }
 
     public LocalInterface(final String filePath, final boolean append, final boolean object) throws IOException {
 
+        while (!fileExists) {
 
-        try {
+            try {
 
-            if (object) {
+                if (object) {
 
-                objectWriter = new ObjectOutputStream(new FileOutputStream(filePath));
-                isObject = true;
-            } else {
+                    objectWriter = new ObjectOutputStream(new FileOutputStream(filePath));
+                    isObject = true;
+                } else {
 
-                writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
-                        .UTF_8);
-                isObject = false;
+                    writer = new OutputStreamWriter(new FileOutputStream(filePath, append), StandardCharsets
+                            .UTF_8);
+                    isObject = false;
+                }
+                fileExists = true;
+            } catch (IOException e) {
 
+                LOGGER.log(Level.SEVERE, e.toString(), e);
+                continue;
             }
-            fileExists = true;
-        } catch (IOException e) {
-
-            LOGGER.log(Level.SEVERE, e.toString(), e);
         }
     }
 
