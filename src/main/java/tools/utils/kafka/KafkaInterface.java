@@ -111,11 +111,7 @@ public class KafkaInterface {
         final TopicPartition topicPartition = new TopicPartition(topic, partition);
         consumer.assign(Arrays.asList(topicPartition));
 
-        // Consume the first message from the topic
-        if (offset == null) {
-            consumer.seekToBeginning(Arrays.asList(topicPartition));
-
-        } else {
+        if (offset != null) {
 
             consumer.seek(topicPartition, offset);
         }
@@ -161,11 +157,7 @@ public class KafkaInterface {
         final TopicPartition topicPartition = new TopicPartition(topic, partition);
         consumer.assign(Arrays.asList(topicPartition));
 
-        // Consume the first message from the topic
-        if (offset == null) {
-
-            consumer.seekToBeginning(Arrays.asList(topicPartition));
-        } else {
+        if (offset != null) {
 
             consumer.seek(topicPartition, offset);
         }
