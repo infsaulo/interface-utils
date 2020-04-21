@@ -59,7 +59,7 @@ public class KafkaInterface {
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
-        consumerProps.put("enable.auto.commit", "false");
+        consumerProps.put("enable.auto.commit", "true");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -76,7 +76,7 @@ public class KafkaInterface {
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
-        consumerProps.put("enable.auto.commit", "false");
+        consumerProps.put("enable.auto.commit", "true");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
