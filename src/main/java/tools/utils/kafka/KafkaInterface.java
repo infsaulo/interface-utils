@@ -76,7 +76,7 @@ public class KafkaInterface {
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
-        consumerProps.put("enable.auto.commit", "false");
+        consumerProps.put("enable.auto.commit", false);
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", "1");
         consumerProps.put("auto.offset.reset", "earliest");
