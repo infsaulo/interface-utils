@@ -115,14 +115,6 @@ public class KafkaInterface {
         if (!subs.contains(topic)) {
 
             consumer.subscribe(Arrays.asList(topic));
-
-            final List<TopicPartition> partitions = new LinkedList<>();
-            for (int partitionIndex = 0; partitionIndex < amountPartitions; partitionIndex++) {
-
-                partitions.add(new TopicPartition(topic, partitionIndex));
-            }
-
-            consumer.seekToBeginning(partitions);
         }
     }
 
