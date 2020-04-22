@@ -108,7 +108,15 @@ public class KafkaInterface {
 
     public Map<String, Object> consumeMessage(final String topic, final int partition, final Long offset) {
 
+        final Set<String> subs = consumer.subscription();
+
+        if (!subs.contains(topic)) {
+
+            consumer.subscribe(Arrays.asList(topic));
+        }
+
         final TopicPartition topicPartition = new TopicPartition(topic, partition);
+
         consumer.assign(Arrays.asList(topicPartition));
 
         if (offset != null) {
