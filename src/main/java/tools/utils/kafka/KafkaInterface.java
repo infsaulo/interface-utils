@@ -7,6 +7,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.TopicPartition;
 
+import java.time.Duration;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -58,7 +59,6 @@ public class KafkaInterface {
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
-        consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", "1");
         consumerProps.put("auto.offset.reset", "earliest");
@@ -77,7 +77,6 @@ public class KafkaInterface {
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
-        consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", "1");
         consumerProps.put("auto.offset.reset", "earliest");
@@ -122,7 +121,7 @@ public class KafkaInterface {
 
         checkSubscription(topic, amountPartitions);
 
-        final ConsumerRecords<String, String> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+        final ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
 
         final List<Map<String, Object>> msgs = new LinkedList<>();
 
