@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.TopicPartition;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -107,19 +108,27 @@ public class KafkaInterface {
         producer.flush();
     }
 
-    public void checkSubscription(final String topic) {
+    public void checkSubscription(final String topic, final int amountPartitions) {
 
         final Set<String> subs = consumer.subscription();
 
         if (!subs.contains(topic)) {
 
             consumer.subscribe(Arrays.asList(topic));
+
+            final List<TopicPartition> partitions = new LinkedList<>();
+            for (int partitionIndex = 0; partitionIndex < amountPartitions; partitionIndex++) {
+
+                partitions.add(new TopicPartition(topic, partitionIndex));
+            }
+
+            consumer.seekToBeginning(partitions);
         }
     }
 
-    public List<Map<String, Object>> consumeMessage(final String topic) {
+    public List<Map<String, Object>> consumeMessage(final String topic, final int amountPartitions) {
 
-        checkSubscription(topic);
+        checkSubscription(topic, amountPartitions);
 
         final ConsumerRecords<String, String> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
 
