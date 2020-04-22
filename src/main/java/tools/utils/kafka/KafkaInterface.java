@@ -148,8 +148,15 @@ public class KafkaInterface {
 
     public void closeInterface() {
 
-        producer.close();
-        consumer.close();
+        if (producer != null) {
+
+            producer.close();
+        }
+
+        if (consumer != null) {
+
+            consumer.close();
+        }
     }
 
     public void commitConsumer() {
