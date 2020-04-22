@@ -59,7 +59,7 @@ public class KafkaInterface {
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
-        consumerProps.put("enable.auto.commit", "true");
+        consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -76,7 +76,7 @@ public class KafkaInterface {
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
-        consumerProps.put("enable.auto.commit", "true");
+        consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -121,6 +121,7 @@ public class KafkaInterface {
         final List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
 
         final Map<String, Object> resultMap = new HashMap<>();
+
         try {
 
             final ConsumerRecord<String, String> record = partitionRecords.get(0);
@@ -200,5 +201,10 @@ public class KafkaInterface {
 
         producer.close();
         consumer.close();
+    }
+
+    public void commitConsumer() {
+
+        consumer.commitSync();
     }
 }
