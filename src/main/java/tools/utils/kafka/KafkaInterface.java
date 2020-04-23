@@ -5,7 +5,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.TopicPartition;
 
 import java.time.Duration;
 import java.util.*;
@@ -107,7 +106,7 @@ public class KafkaInterface {
         producer.flush();
     }
 
-    public void checkSubscription(final String topic, final int amountPartitions) {
+    public void checkSubscription(final String topic) {
 
         final Set<String> subs = consumer.subscription();
 
@@ -117,9 +116,9 @@ public class KafkaInterface {
         }
     }
 
-    public List<Map<String, Object>> consumeMessage(final String topic, final int amountPartitions) {
+    public List<Map<String, Object>> consumeMessage(final String topic) {
 
-        checkSubscription(topic, amountPartitions);
+        checkSubscription(topic);
 
         final ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
 

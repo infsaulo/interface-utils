@@ -6,11 +6,9 @@ import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.config.SslConfigs;
 
+import java.time.Duration;
 import java.util.*;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
@@ -101,6 +99,16 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producer = null;
     }
 
+    public void checkSubscription(final String topic) {
+
+        final Set<String> subs = consumer.subscription();
+
+        if (!subs.contains(topic)) {
+
+            consumer.subscribe(Arrays.asList(topic));
+        }
+    }
+
     public void sendMessage(final String key, final String topic, final T msg) {
 
         final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, key, msg);
@@ -117,112 +125,32 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producer.flush();
     }
 
-    public Map<String, Object> consumeMessage(final String topic, final int partition, final Long offset) {
+    public List<Map<String, Object>> consumeMessage(final String topic) {
 
-        final TopicPartition topicPartition = new TopicPartition(topic, partition);
-        consumer.assign(Arrays.asList(topicPartition));
+        checkSubscription(topic);
 
-        // Consume the first message from the topic
-        if (offset == null) {
-            consumer.seekToBeginning(Arrays.asList(topicPartition));
+        final ConsumerRecords<String, T> records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
 
-        } else {
+        final List<Map<String, Object>> msgs = new LinkedList<>();
 
-            consumer.seek(topicPartition, offset);
-        }
+        for (ConsumerRecord<String, T> record : records) {
 
-        ConsumerRecords<String, T> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
+            final Map<String, Object> resultMap = new HashMap<>();
 
-        while (records.isEmpty()) {
-
-            records = consumer.poll(CONSUMER_POLL_TIMEOUT);
-            LOGGER.log(Level.INFO, "Trying to poll from topic " + topic);
-        }
-
-        final List<ConsumerRecord<String, T>> partitionRecords = records.records(topicPartition);
-
-        final Map<String, Object> resultMap = new HashMap<>();
-        try {
-
-            final ConsumerRecord<String, T> record = partitionRecords.get(0);
             final T message = record.value();
             final String key = record.key();
             final long resultOffset = record.offset();
+            final int partition = record.partition();
 
             resultMap.put("msg", message);
             resultMap.put("key", key);
             resultMap.put("offset", resultOffset);
+            resultMap.put("partition", partition);
 
-            consumer.unsubscribe();
-            return resultMap;
-        } catch (IndexOutOfBoundsException ex) {
-
-            LOGGER.log(Level.WARNING, ex.toString(), ex);
-            consumer.unsubscribe();
-            return null;
-        }
-    }
-
-    public Map<String, Object> consumeLastMessage(final String topic, final int partition) {
-
-        final TopicPartition topicPartition = new TopicPartition(topic, partition);
-        consumer.assign(Arrays.asList(topicPartition));
-
-        consumer.seekToEnd(Arrays.asList(topicPartition));
-        final Long lastMsgPosition = consumer.position(topicPartition) - 1;
-
-        consumer.unsubscribe();
-        return this.consumeMessage(topic, partition, lastMsgPosition);
-    }
-
-    public List<Map<String, Object>> consumeMessages(final String topic, final int partition, final Long offset,
-                                                     final Long amountMessages) {
-
-        final TopicPartition topicPartition = new TopicPartition(topic, partition);
-        consumer.assign(Arrays.asList(topicPartition));
-
-        // Consume the first message from the topic
-        if (offset == null) {
-
-            consumer.seekToBeginning(Arrays.asList(topicPartition));
-        } else {
-
-            consumer.seek(topicPartition, offset);
+            msgs.add(resultMap);
         }
 
-        final List<Map<String, Object>> resultMapList = new ArrayList<>();
-        int index = 0;
-
-        while (index < amountMessages) {
-
-            final ConsumerRecords<String, T> records = consumer.poll(CONSUMER_POLL_TIMEOUT);
-
-            final List<ConsumerRecord<String, T>> partitionRecords = records.records(topicPartition);
-
-            for (final ConsumerRecord<String, T> record : partitionRecords) {
-
-                if (index >= amountMessages) {
-
-                    break;
-                }
-
-                final T message = record.value();
-                final String key = record.key();
-                final long resultOffset = record.offset();
-
-                final Map<String, Object> resultMap = new HashMap<>();
-                resultMap.put("msg", message);
-                resultMap.put("key", key);
-                resultMap.put("offset", resultOffset);
-
-                resultMapList.add(resultMap);
-
-                index++;
-            }
-        }
-
-        consumer.unsubscribe();
-        return resultMapList;
+        return msgs;
     }
 
     public void closeInterface() {
@@ -235,5 +163,10 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
             consumer.close();
         }
+    }
+
+    public void commitConsumer() {
+
+        consumer.commitSync();
     }
 }
