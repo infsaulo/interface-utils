@@ -62,6 +62,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
+        consumerProps.put("max.poll.records", "1");
         consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("schema.registry.url", registryUrl);
@@ -83,6 +84,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
+        consumerProps.put("max.poll.records", "1");
         consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("schema.registry.url", registryUrl);
