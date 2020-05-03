@@ -23,11 +23,11 @@ public final class LocalInterface {
 
     private boolean isObject;
 
-    private boolean isClosed;
+    private boolean closed;
 
     public LocalInterface(final String filePath, final boolean object) {
 
-        isClosed = true;
+        closed = true;
 
         while (!fileExists) {
 
@@ -44,7 +44,7 @@ public final class LocalInterface {
                 }
 
                 fileExists = true;
-                isClosed = false;
+                closed = false;
             } catch (IOException ex) {
 
                 LOGGER.log(Level.SEVERE, ex.toString(), ex);
@@ -56,7 +56,7 @@ public final class LocalInterface {
 
     public LocalInterface(final String filePath, final boolean append, final boolean object) throws IOException {
 
-        isClosed = true;
+        closed = true;
 
         while (!fileExists) {
 
@@ -74,7 +74,7 @@ public final class LocalInterface {
                 }
 
                 fileExists = true;
-                isClosed = false;
+                closed = false;
             } catch (IOException e) {
 
                 LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -163,7 +163,7 @@ public final class LocalInterface {
                 reader.close();
             }
 
-            isClosed = true;
+            closed = true;
         } catch (IOException e) {
 
             LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -182,7 +182,7 @@ public final class LocalInterface {
                 writer.close();
             }
 
-            isClosed = true;
+            closed = true;
         } catch (IOException e) {
 
             LOGGER.log(Level.SEVERE, e.toString(), e);
@@ -195,7 +195,7 @@ public final class LocalInterface {
     }
 
     public boolean isClosed() {
-        
-        return isClosed;
+
+        return closed;
     }
 }
