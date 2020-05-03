@@ -11,6 +11,8 @@ public final class LocalInterface {
 
     private static final Logger LOGGER = Logger.getLogger(LocalInterface.class.getName());
 
+    private final String filePath;
+
     private Writer writer;
 
     private BufferedReader reader;
@@ -27,6 +29,7 @@ public final class LocalInterface {
 
     public LocalInterface(final String filePath, final boolean object) {
 
+        this.filePath = filePath;
         closed = true;
 
         while (!fileExists) {
@@ -55,6 +58,8 @@ public final class LocalInterface {
     }
 
     public LocalInterface(final String filePath, final boolean append, final boolean object) throws IOException {
+
+        this.filePath = filePath;
 
         closed = true;
 
@@ -197,5 +202,10 @@ public final class LocalInterface {
     public boolean isClosed() {
 
         return closed;
+    }
+
+    public String getFilePath() {
+        
+        return filePath;
     }
 }
