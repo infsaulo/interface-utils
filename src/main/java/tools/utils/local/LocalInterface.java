@@ -32,29 +32,24 @@ public final class LocalInterface {
         this.filePath = filePath;
         closed = true;
 
-        while (!fileExists) {
+        try {
 
-            try {
+            if (object) {
 
-                if (object) {
+                objectReader = new ObjectInputStream(new FileInputStream(filePath));
+                isObject = true;
+            } else {
 
-                    objectReader = new ObjectInputStream(new FileInputStream(filePath));
-                    isObject = true;
-                } else {
-
-                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
-                    isObject = false;
-                }
-
-                fileExists = true;
-                closed = false;
-            } catch (IOException ex) {
-
-                LOGGER.log(Level.SEVERE, ex.toString(), ex);
-                continue;
+                reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), Charsets.UTF_8));
+                isObject = false;
             }
-        }
 
+            fileExists = true;
+            closed = false;
+        } catch (IOException ex) {
+
+            LOGGER.log(Level.SEVERE, ex.toString(), ex);
+        }
     }
 
     public LocalInterface(final String filePath, final boolean append, final boolean object) throws IOException {
@@ -205,7 +200,7 @@ public final class LocalInterface {
     }
 
     public String getFilePath() {
-        
+
         return filePath;
     }
 }
