@@ -5,6 +5,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.time.Duration;
@@ -28,6 +29,12 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("schema.registry.url", registryUrl);
+        producerProps.put("acks", "-1");
+        producerProps.put("retries", "3");
+        producerProps.put("max.in.flight.requests.per.connection", "1");
+        producerProps.put("retry.backoff.ms", "1000");
+        producerProps.put("request.timeout.ms", "15000");
+        producerProps.put("min.insync.replicas", "2");
 
         producer = new KafkaProducer<>(producerProps);
 
@@ -48,6 +55,12 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("ssl.keystore.password", keystorePass);
         producerProps.put("ssl.truststore.location", truststoreFilePath);
         producerProps.put("ssl.truststore.password", truststorePass);
+        producerProps.put("acks", "-1");
+        producerProps.put("retries", "3");
+        producerProps.put("max.in.flight.requests.per.connection", "1");
+        producerProps.put("retry.backoff.ms", "1000");
+        producerProps.put("request.timeout.ms", "15000");
+        producerProps.put("min.insync.replicas", "2");
 
         producer = new KafkaProducer<>(producerProps);
 
