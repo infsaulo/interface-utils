@@ -35,6 +35,8 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("request.timeout.ms", "15000");
         producerProps.put("min.insync.replicas", "2");
         //producerProps.put("compression.type", "gzip");
+        producerProps.put("linger.ms", "30000");
+        producerProps.put("batch.size", "131072"); //128K batch size
 
         producer = new KafkaProducer<>(producerProps);
 
@@ -62,6 +64,8 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("request.timeout.ms", "15000");
         producerProps.put("min.insync.replicas", "2");
         //producerProps.put("compression.type", "gzip");
+        producerProps.put("linger.ms", "30000");
+        producerProps.put("batch.size", "131072"); //128K batch size
 
         producer = new KafkaProducer<>(producerProps);
 
@@ -130,7 +134,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, key, msg);
 
         producer.send(recordMsg);
-        producer.flush();
+        //producer.flush();
     }
 
     public void sendMessage(final String key, final String topic, final T msg, final int partition) {
@@ -138,7 +142,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
 
         producer.send(recordMsg);
-        producer.flush();
+        //producer.flush();
     }
 
     public List<Map<String, Object>> consumeMessage(final String topic) {
@@ -173,6 +177,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
         if (producer != null) {
 
+            producer.flush();
             producer.close();
         }
         if (consumer != null) {
