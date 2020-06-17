@@ -1,12 +1,10 @@
 package tools.utils.kafka;
 
 import org.apache.avro.specific.SpecificRecordBase;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.time.Duration;
@@ -36,7 +34,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("retry.backoff.ms", "1000");
         producerProps.put("request.timeout.ms", "15000");
         producerProps.put("min.insync.replicas", "2");
-        producerProps.put("compression.type", "gzip");
+        //producerProps.put("compression.type", "gzip");
 
         producer = new KafkaProducer<>(producerProps);
 
@@ -63,7 +61,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("retry.backoff.ms", "1000");
         producerProps.put("request.timeout.ms", "15000");
         producerProps.put("min.insync.replicas", "2");
-        producerProps.put("compression.type", "gzip");
+        //producerProps.put("compression.type", "gzip");
 
         producer = new KafkaProducer<>(producerProps);
 
