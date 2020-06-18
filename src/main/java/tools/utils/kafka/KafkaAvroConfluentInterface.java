@@ -9,6 +9,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.time.Duration;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
@@ -35,8 +36,6 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("request.timeout.ms", "15000");
         producerProps.put("min.insync.replicas", "2");
         //producerProps.put("compression.type", "gzip");
-        producerProps.put("linger.ms", "30000");
-        producerProps.put("batch.size", "131072"); //128K batch size
 
         producer = new KafkaProducer<>(producerProps);
 
@@ -64,8 +63,6 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producerProps.put("request.timeout.ms", "15000");
         producerProps.put("min.insync.replicas", "2");
         //producerProps.put("compression.type", "gzip");
-        producerProps.put("linger.ms", "30000");
-        producerProps.put("batch.size", "131072"); //128K batch size
 
         producer = new KafkaProducer<>(producerProps);
 
@@ -141,8 +138,10 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
         final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
 
+        LOGGER.log(Level.INFO, "Sending msg with key " + key + " to topic " + topic);
         producer.send(recordMsg);
-        //producer.flush();
+        producer.flush();
+        LOGGER.log(Level.INFO, "Sent msg with key " + key + " to topic " + topic);
     }
 
     public List<Map<String, Object>> consumeMessage(final String topic) {
