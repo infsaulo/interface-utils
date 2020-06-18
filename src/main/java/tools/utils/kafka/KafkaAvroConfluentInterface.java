@@ -130,20 +130,20 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
         final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, key, msg);
 
-        LOGGER.log(Level.INFO, "Sending msg with key " + key + " to topic " + topic);
+        LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
         producer.send(recordMsg);
         producer.flush();
-        LOGGER.log(Level.INFO, "Sent msg with key " + key + " to topic " + topic);
+        LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
     }
 
     public void sendMessage(final String key, final String topic, final T msg, final int partition) {
 
         final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
 
-        LOGGER.log(Level.INFO, "Sending msg with key " + key + " to topic " + topic);
+        LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
         producer.send(recordMsg);
         producer.flush();
-        LOGGER.log(Level.INFO, "Sent msg with key " + key + " to topic " + topic);
+        LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
     }
 
     public List<Map<String, Object>> consumeMessage(final String topic) {
