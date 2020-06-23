@@ -1,5 +1,6 @@
 package tools.utils.kafka;
 
+import org.apache.avro.specific.SpecificRecord;
 import org.apache.avro.specific.SpecificRecordBase;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -12,15 +13,21 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
+public class KafkaAvroConfluentInterface {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaAvroConfluentInterface.class.getName());
 
     private static final long CONSUMER_POLL_TIMEOUT = 6000;
 
-    private final KafkaProducer<String, T> producer;
+    private KafkaProducer<String, SpecificRecordBase> simpleKeyProducer;
 
-    private KafkaConsumer<String, T> consumer;
+    private KafkaConsumer<String, SpecificRecordBase> simpleKeyConsumer;
+
+    private KafkaProducer<SpecificRecordBase, SpecificRecordBase> avroKeyProducer;
+
+    private KafkaConsumer<SpecificRecordBase, SpecificRecordBase> avroKeyConsumer;
+
+    private final boolean avroKey;
 
     private Properties loadSerializers(final boolean avroKey) {
 
@@ -54,6 +61,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl, final boolean avroKey) {
 
+        this.avroKey = avroKey;
         final Properties producerProps = loadSerializers(avroKey);
         producerProps.put("bootstrap.servers", kafkaUrl);
         producerProps.put("schema.registry.url", registryUrl);
@@ -65,15 +73,23 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         //producerProps.put("min.insync.replicas", "2");
         //producerProps.put("compression.type", "gzip");
 
-        producer = new KafkaProducer<>(producerProps);
+        if (avroKey) {
 
-        consumer = null;
+            avroKeyProducer = new KafkaProducer<>(producerProps);
+        } else {
+
+            simpleKeyProducer = new KafkaProducer<>(producerProps);
+        }
+
+        avroKeyConsumer = null;
+        simpleKeyConsumer = null;
     }
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl, final String keystoreFilePath,
                                        final String keystorePass, final String truststoreFilePath,
                                        final String truststorePass, final boolean avroKey) {
 
+        this.avroKey = avroKey;
         final Properties producerProps = loadSerializers(avroKey);
         producerProps.put("bootstrap.servers", kafkaUrl);
         producerProps.put("schema.registry.url", registryUrl);
@@ -90,13 +106,21 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         //producerProps.put("min.insync.replicas", "2");
         //producerProps.put("compression.type", "gzip");
 
-        producer = new KafkaProducer<>(producerProps);
+        if (avroKey) {
 
-        consumer = null;
+            avroKeyProducer = new KafkaProducer<>(producerProps);
+        } else {
+
+            simpleKeyProducer = new KafkaProducer<>(producerProps);
+        }
+
+        avroKeyConsumer = null;
+        simpleKeyConsumer = null;
     }
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl, final boolean avroKey) {
 
+        this.avroKey = avroKey;
         final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
@@ -108,14 +132,22 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
 
-        consumer = new KafkaConsumer<>(consumerProps);
+        if (avroKey) {
 
-        producer = null;
+            avroKeyConsumer = new KafkaConsumer<>(consumerProps);
+        } else {
+
+            simpleKeyConsumer = new KafkaConsumer<>(consumerProps);
+        }
+
+        avroKeyProducer = null;
+        simpleKeyProducer = null;
     }
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
                                        final int maxPollRecords, final boolean avroKey) {
 
+        this.avroKey = avroKey;
         final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
@@ -127,15 +159,23 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
 
-        consumer = new KafkaConsumer<>(consumerProps);
+        if (avroKey) {
 
-        producer = null;
+            avroKeyConsumer = new KafkaConsumer<>(consumerProps);
+        } else {
+
+            simpleKeyConsumer = new KafkaConsumer<>(consumerProps);
+        }
+
+        avroKeyProducer = null;
+        simpleKeyProducer = null;
     }
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
                                        final String keystoreFilePath, final String keystorePass,
                                        final String truststoreFilePath, final String truststorePass, final boolean avroKey) {
 
+        this.avroKey = avroKey;
         final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
@@ -152,9 +192,16 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("ssl.truststore.location", truststoreFilePath);
         consumerProps.put("ssl.truststore.password", truststorePass);
 
-        consumer = new KafkaConsumer<>(consumerProps);
+        if (avroKey) {
 
-        producer = null;
+            avroKeyConsumer = new KafkaConsumer<>(consumerProps);
+        } else {
+
+            simpleKeyConsumer = new KafkaConsumer<>(consumerProps);
+        }
+
+        avroKeyProducer = null;
+        simpleKeyProducer = null;
     }
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
@@ -162,6 +209,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
                                        final String truststoreFilePath, final String truststorePass,
                                        final int maxPollRecords, final boolean avroKey) {
 
+        this.avroKey = avroKey;
         final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
@@ -178,84 +226,174 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("ssl.truststore.location", truststoreFilePath);
         consumerProps.put("ssl.truststore.password", truststorePass);
 
-        consumer = new KafkaConsumer<>(consumerProps);
+        if (avroKey) {
 
-        producer = null;
+            avroKeyConsumer = new KafkaConsumer<>(consumerProps);
+        } else {
+
+            simpleKeyConsumer = new KafkaConsumer<>(consumerProps);
+        }
+
+        avroKeyProducer = null;
+        simpleKeyProducer = null;
     }
 
     public void checkSubscription(final String topic) {
 
-        final Set<String> subs = consumer.subscription();
+        if (this.avroKey) {
 
-        if (!subs.contains(topic)) {
+            final Set<String> subs = avroKeyConsumer.subscription();
 
-            consumer.subscribe(Arrays.asList(topic));
+            if (!subs.contains(topic)) {
+
+                avroKeyConsumer.subscribe(Arrays.asList(topic));
+            }
+        } else {
+
+            final Set<String> subs = simpleKeyConsumer.subscription();
+
+            if (!subs.contains(topic)) {
+
+                simpleKeyConsumer.subscribe(Arrays.asList(topic));
+            }
         }
     }
 
-    public void sendMessage(final String key, final String topic, final T msg) {
+    public void sendMessage(final Object key, final String topic, final SpecificRecord msg) {
 
-        final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, key, msg);
+        if (avroKey) {
 
-        LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
-        producer.send(recordMsg);
-        producer.flush();
-        LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
+            final ProducerRecord<SpecificRecordBase, SpecificRecordBase> recordMsg = new ProducerRecord(topic,
+                    (SpecificRecord) key, msg);
+
+            LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
+            avroKeyProducer.send(recordMsg);
+            avroKeyProducer.flush();
+            LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
+        } else {
+
+            final ProducerRecord<String, SpecificRecordBase> recordMsg = new ProducerRecord(topic, (String) key, msg);
+
+            LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
+            simpleKeyProducer.send(recordMsg);
+            simpleKeyProducer.flush();
+            LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
+        }
     }
 
-    public void sendMessage(final String key, final String topic, final T msg, final int partition) {
+    public void sendMessage(final Object key, final String topic, final SpecificRecordBase msg, final int partition) {
 
-        final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
+        if (avroKey) {
 
-        LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
-        producer.send(recordMsg);
-        producer.flush();
-        LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
+            final ProducerRecord<SpecificRecordBase, SpecificRecordBase> recordMsg = new ProducerRecord(topic, partition,
+                    (SpecificRecordBase) key, msg);
+
+            LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
+            avroKeyProducer.send(recordMsg);
+            avroKeyProducer.flush();
+            LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
+        } else {
+
+            final ProducerRecord<String, SpecificRecordBase> recordMsg = new ProducerRecord(topic, partition,
+                    (String) key, msg);
+
+            LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
+            simpleKeyProducer.send(recordMsg);
+            simpleKeyProducer.flush();
+            LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
+        }
     }
 
     public List<Map<String, Object>> consumeMessage(final String topic) {
 
         checkSubscription(topic);
 
-        final ConsumerRecords<String, T> records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
+        if (avroKey) {
 
-        final List<Map<String, Object>> msgs = new LinkedList<>();
+            final ConsumerRecords<SpecificRecordBase, SpecificRecordBase> records = avroKeyConsumer.
+                    poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
 
-        for (ConsumerRecord<String, T> record : records) {
+            final List<Map<String, Object>> msgs = new LinkedList<>();
 
-            final Map<String, Object> resultMap = new HashMap<>();
+            for (ConsumerRecord<SpecificRecordBase, SpecificRecordBase> record : records) {
 
-            final T message = record.value();
-            final String key = record.key();
-            final long resultOffset = record.offset();
-            final int partition = record.partition();
+                final Map<String, Object> resultMap = new HashMap<>();
 
-            resultMap.put("msg", message);
-            resultMap.put("key", key);
-            resultMap.put("offset", resultOffset);
-            resultMap.put("partition", partition);
+                final SpecificRecordBase message = record.value();
+                final SpecificRecordBase key = record.key();
+                final long resultOffset = record.offset();
+                final int partition = record.partition();
 
-            msgs.add(resultMap);
+                resultMap.put("msg", message);
+                resultMap.put("key", key);
+                resultMap.put("offset", resultOffset);
+                resultMap.put("partition", partition);
+
+                msgs.add(resultMap);
+            }
+
+            return msgs;
+        } else {
+
+            final ConsumerRecords<String, SpecificRecordBase> records = simpleKeyConsumer.
+                    poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
+
+            final List<Map<String, Object>> msgs = new LinkedList<>();
+
+            for (ConsumerRecord<String, SpecificRecordBase> record : records) {
+
+                final Map<String, Object> resultMap = new HashMap<>();
+
+                final SpecificRecordBase message = record.value();
+                final String key = record.key();
+                final long resultOffset = record.offset();
+                final int partition = record.partition();
+
+                resultMap.put("msg", message);
+                resultMap.put("key", key);
+                resultMap.put("offset", resultOffset);
+                resultMap.put("partition", partition);
+
+                msgs.add(resultMap);
+            }
+
+            return msgs;
         }
-
-        return msgs;
     }
 
     public void closeInterface() {
 
-        if (producer != null) {
+        if (avroKeyProducer != null) {
 
-            producer.flush();
-            producer.close();
+            avroKeyProducer.flush();
+            avroKeyProducer.close();
         }
-        if (consumer != null) {
 
-            consumer.close();
+        if (simpleKeyProducer != null) {
+
+            simpleKeyProducer.flush();
+            simpleKeyProducer.close();
+        }
+
+        if (avroKeyConsumer != null) {
+
+            avroKeyConsumer.close();
+        }
+
+        if (simpleKeyConsumer != null) {
+
+            simpleKeyConsumer.close();
         }
     }
 
     public void commitConsumer() {
 
-        consumer.commitSync();
+        if (avroKey) {
+
+            avroKeyConsumer.commitSync();
+        } else {
+
+            simpleKeyConsumer.commitSync();
+        }
     }
 }
