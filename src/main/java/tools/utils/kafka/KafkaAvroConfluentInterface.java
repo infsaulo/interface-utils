@@ -22,12 +22,40 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
     private KafkaConsumer<String, T> consumer;
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl) {
+    private Properties loadSerializers(final boolean avroKey) {
 
-        final Properties producerProps = new Properties();
+        final Properties props = new Properties();
+
+        if (avroKey) {
+
+            props.put("key.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
+        } else {
+
+            props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        }
+
+        return props;
+    }
+
+    private Properties loadDeserializers(final boolean avroKey) {
+
+        final Properties props = new Properties();
+
+        if (avroKey) {
+
+            props.put("key.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
+        } else {
+
+            props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        }
+
+        return props;
+    }
+
+    public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl, final boolean avroKey) {
+
+        final Properties producerProps = loadSerializers(avroKey);
         producerProps.put("bootstrap.servers", kafkaUrl);
-        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("schema.registry.url", registryUrl);
         //producerProps.put("acks", "-1");
         //producerProps.put("retries", "3");
@@ -44,12 +72,10 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl, final String keystoreFilePath,
                                        final String keystorePass, final String truststoreFilePath,
-                                       final String truststorePass) {
+                                       final String truststorePass, final boolean avroKey) {
 
-        final Properties producerProps = new Properties();
+        final Properties producerProps = loadSerializers(avroKey);
         producerProps.put("bootstrap.servers", kafkaUrl);
-        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("schema.registry.url", registryUrl);
         producerProps.put("security.protocol", "SSL");
         producerProps.put("ssl.keystore.location", keystoreFilePath);
@@ -69,17 +95,15 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumer = null;
     }
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl) {
+    public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl, final boolean avroKey) {
 
-        final Properties consumerProps = new Properties();
+        final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", "1");
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
@@ -90,17 +114,15 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
     }
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
-                                       final int maxPollRecords) {
+                                       final int maxPollRecords, final boolean avroKey) {
 
-        final Properties consumerProps = new Properties();
+        final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", String.valueOf(maxPollRecords));
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
@@ -112,17 +134,15 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
                                        final String keystoreFilePath, final String keystorePass,
-                                       final String truststoreFilePath, final String truststorePass) {
+                                       final String truststoreFilePath, final String truststorePass, final boolean avroKey) {
 
-        final Properties consumerProps = new Properties();
+        final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", "1");
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
@@ -140,18 +160,16 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
     public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
                                        final String keystoreFilePath, final String keystorePass,
                                        final String truststoreFilePath, final String truststorePass,
-                                       final int maxPollRecords) {
+                                       final int maxPollRecords, final boolean avroKey) {
 
-        final Properties consumerProps = new Properties();
+        final Properties consumerProps = loadDeserializers(avroKey);
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", String.valueOf(maxPollRecords));
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
-        consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
-        consumerProps.put("schema.registry.url", registryUrl);  
+        consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
         consumerProps.put("security.protocol", "SSL");
