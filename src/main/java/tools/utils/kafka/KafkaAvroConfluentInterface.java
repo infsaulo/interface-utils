@@ -76,9 +76,9 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
         //producerProps.put("min.insync.replicas", "2");
-        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
-        producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
-        producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
+        //producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
+        //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
+        //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
         producerProps.put("max.request.size", 15728640);
 
         if (avroKey) {
@@ -112,9 +112,9 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
         //producerProps.put("min.insync.replicas", "2");
-        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
-        producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
-        producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
+        //producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
+        //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
+        //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
         producerProps.put("max.request.size", 15728640);
 
         if (avroKey) {
@@ -279,7 +279,7 @@ public class KafkaAvroConfluentInterface {
 
             LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
             avroKeyProducer.send(recordMsg);
-            //avroKeyProducer.flush();
+            avroKeyProducer.flush();
             LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
         } else {
 
@@ -287,7 +287,7 @@ public class KafkaAvroConfluentInterface {
 
             LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
             simpleKeyProducer.send(recordMsg);
-            //simpleKeyProducer.flush();
+            simpleKeyProducer.flush();
             LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
         }
     }
