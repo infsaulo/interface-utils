@@ -41,6 +41,8 @@ public class KafkaAvroConfluentInterface {
             props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         }
 
+        props.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
+
         return props;
     }
 
@@ -55,6 +57,8 @@ public class KafkaAvroConfluentInterface {
 
             props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         }
+
+        props.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
 
         return props;
     }
