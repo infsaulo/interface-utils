@@ -76,7 +76,7 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
         //producerProps.put("min.insync.replicas", "2");
-        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
+        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
         //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
         producerProps.put("max.request.size", 15728640);
@@ -112,7 +112,7 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
         //producerProps.put("min.insync.replicas", "2");
-        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
+        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
         //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
         producerProps.put("max.request.size", 15728640);
