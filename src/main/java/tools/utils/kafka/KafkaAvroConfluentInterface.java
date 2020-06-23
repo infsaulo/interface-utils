@@ -79,6 +79,7 @@ public class KafkaAvroConfluentInterface {
         producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
         producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
+        producerProps.put("max.request.size", 15728640);
 
         if (avroKey) {
 
@@ -114,6 +115,7 @@ public class KafkaAvroConfluentInterface {
         producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "gzip");
         producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
+        producerProps.put("max.request.size", 15728640);
 
         if (avroKey) {
 
