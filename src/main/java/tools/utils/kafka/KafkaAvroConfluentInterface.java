@@ -6,6 +6,7 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.time.Duration;
@@ -75,7 +76,9 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
         //producerProps.put("min.insync.replicas", "2");
-        producerProps.put("compression.type", "snappy");
+        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+        producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 100);
+        producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 16_384 * 4);
 
         if (avroKey) {
 
@@ -108,7 +111,9 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
         //producerProps.put("min.insync.replicas", "2");
-        producerProps.put("compression.type", "snappy");
+        producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
+        producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 100);
+        producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 16_384 * 4);
 
         if (avroKey) {
 
