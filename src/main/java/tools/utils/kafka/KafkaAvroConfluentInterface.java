@@ -19,7 +19,7 @@ public class KafkaAvroConfluentInterface {
 
     private static final long CONSUMER_POLL_TIMEOUT = 6000;
 
-    private static final long MAX_MSG_SIZE = 15728640;
+    private static final int MAX_MSG_SIZE = 15728640;
 
     private KafkaProducer<String, SpecificRecordBase> simpleKeyProducer;
 
