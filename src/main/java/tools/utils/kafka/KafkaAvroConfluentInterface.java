@@ -6,7 +6,6 @@ import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
 import java.time.Duration;
@@ -19,6 +18,8 @@ public class KafkaAvroConfluentInterface {
     private static final Logger LOGGER = Logger.getLogger(KafkaAvroConfluentInterface.class.getName());
 
     private static final long CONSUMER_POLL_TIMEOUT = 6000;
+
+    private static final long MAX_MSG_SIZE = 15728640;
 
     private KafkaProducer<String, SpecificRecordBase> simpleKeyProducer;
 
@@ -70,6 +71,8 @@ public class KafkaAvroConfluentInterface {
         final Properties producerProps = loadSerializers(avroKey);
         producerProps.put("bootstrap.servers", kafkaUrl);
         producerProps.put("schema.registry.url", registryUrl);
+        producerProps.put("max.request.size", MAX_MSG_SIZE);
+        producerProps.put("compression.type", "snappy");
         //producerProps.put("acks", "-1");
         //producerProps.put("retries", "3");
         //producerProps.put("max.in.flight.requests.per.connection", "1");
@@ -79,7 +82,7 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
         //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
-        producerProps.put("max.request.size", 15728640);
+
 
         if (avroKey) {
 
@@ -101,6 +104,8 @@ public class KafkaAvroConfluentInterface {
         final Properties producerProps = loadSerializers(avroKey);
         producerProps.put("bootstrap.servers", kafkaUrl);
         producerProps.put("schema.registry.url", registryUrl);
+        producerProps.put("max.request.size", MAX_MSG_SIZE);
+        producerProps.put("compression.type", "snappy");
         producerProps.put("security.protocol", "SSL");
         producerProps.put("ssl.keystore.location", keystoreFilePath);
         producerProps.put("ssl.keystore.password", keystorePass);
@@ -112,10 +117,9 @@ public class KafkaAvroConfluentInterface {
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
         //producerProps.put("min.insync.replicas", "2");
-        //producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
         //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
-        producerProps.put("max.request.size", 15728640);
+
 
         if (avroKey) {
 
@@ -142,6 +146,7 @@ public class KafkaAvroConfluentInterface {
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
+        consumerProps.put("max.partition.fetch.bytes", MAX_MSG_SIZE);
 
         if (avroKey) {
 
@@ -169,6 +174,7 @@ public class KafkaAvroConfluentInterface {
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
         consumerProps.put("auto.offset.reset", "earliest");
+        consumerProps.put("max.partition.fetch.bytes", MAX_MSG_SIZE);
 
         if (avroKey) {
 
