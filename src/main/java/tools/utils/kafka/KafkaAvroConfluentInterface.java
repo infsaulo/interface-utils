@@ -307,7 +307,7 @@ public class KafkaAvroConfluentInterface {
 
             LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
             avroKeyProducer.send(recordMsg);
-            //avroKeyProducer.flush();
+            avroKeyProducer.flush();
             LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
         } else {
 
@@ -316,7 +316,7 @@ public class KafkaAvroConfluentInterface {
 
             LOGGER.log(Level.WARNING, "Sending msg with key " + key + " to topic " + topic);
             simpleKeyProducer.send(recordMsg);
-            //simpleKeyProducer.flush();
+            simpleKeyProducer.flush();
             LOGGER.log(Level.WARNING, "Sent msg with key " + key + " to topic " + topic);
         }
     }
