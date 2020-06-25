@@ -56,7 +56,7 @@ public class KafkaAvroConfluentInterfaceKV <K extends SpecificRecordBase, V exte
         final Properties producerProps = new Properties();
         producerProps.put("bootstrap.servers", kafkaUrl);
         producerProps.put("schema.registry.url", registryUrl);
-        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("key.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("max.request.size", MAX_MSG_SIZE);
         producerProps.put("compression.type", "snappy");
