@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
+public class KafkaAvroConfluentInterfaceKV <K extends SpecificRecordBase, V extends SpecificRecordBase> {
 
     private static final Logger LOGGER = Logger.getLogger(KafkaAvroConfluentInterface.class.getName());
 
@@ -20,17 +20,17 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
     private static final int MAX_MSG_SIZE = 15728640;
 
-    private final KafkaProducer<String, T> producer;
+    private final KafkaProducer<K, V> producer;
 
-    private KafkaConsumer<String, T> consumer;
+    private KafkaConsumer<K, V> consumer;
 
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl) {
+    public KafkaAvroConfluentInterfaceKV(final String kafkaUrl, final String registryUrl) {
 
         final Properties producerProps = new Properties();
         producerProps.put("bootstrap.servers", kafkaUrl);
         producerProps.put("schema.registry.url", registryUrl);
-        producerProps.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        producerProps.put("key.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("max.request.size", MAX_MSG_SIZE);
         producerProps.put("compression.type", "snappy");
@@ -49,7 +49,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumer = null;
     }
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String registryUrl, final String keystoreFilePath,
+    public KafkaAvroConfluentInterfaceKV(final String kafkaUrl, final String registryUrl, final String keystoreFilePath,
                                        final String keystorePass, final String truststoreFilePath,
                                        final String truststorePass) {
 
@@ -79,11 +79,11 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumer = null;
     }
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl) {
+    public KafkaAvroConfluentInterfaceKV(final String kafkaUrl, final String groupId, final String registryUrl) {
 
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("key.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
@@ -100,7 +100,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producer = null;
     }
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
+    public KafkaAvroConfluentInterfaceKV(final String kafkaUrl, final String groupId, final String registryUrl,
                                        final int maxPollRecords) {
 
         final Properties consumerProps = new Properties();
@@ -110,7 +110,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         consumerProps.put("auto.commit.interval.ms", "1000");
         consumerProps.put("session.timeout.ms", "30000");
         consumerProps.put("max.poll.records", String.valueOf(maxPollRecords));
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("key.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("schema.registry.url", registryUrl);
         consumerProps.put("specific.avro.reader", true);
@@ -122,13 +122,13 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producer = null;
     }
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
+    public KafkaAvroConfluentInterfaceKV(final String kafkaUrl, final String groupId, final String registryUrl,
                                        final String keystoreFilePath, final String keystorePass,
                                        final String truststoreFilePath, final String truststorePass) {
 
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("key.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("group.id", groupId);
         consumerProps.put("enable.auto.commit", "false");
@@ -150,7 +150,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         producer = null;
     }
 
-    public KafkaAvroConfluentInterface(final String kafkaUrl, final String groupId, final String registryUrl,
+    public KafkaAvroConfluentInterfaceKV(final String kafkaUrl, final String groupId, final String registryUrl,
                                        final String keystoreFilePath, final String keystorePass,
                                        final String truststoreFilePath, final String truststorePass,
                                        final int maxPollRecords) {
@@ -158,7 +158,7 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         final Properties consumerProps = new Properties();
         consumerProps.put("bootstrap.servers", kafkaUrl);
         consumerProps.put("group.id", groupId);
-        consumerProps.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+        consumerProps.put("key.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("value.deserializer", "io.confluent.kafka.serializers.KafkaAvroDeserializer");
         consumerProps.put("enable.auto.commit", "false");
         consumerProps.put("auto.commit.interval.ms", "1000");
@@ -189,9 +189,9 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         }
     }
 
-    public void sendMessage(final String key, final String topic, final T msg) {
+    public void sendMessage(final K key, final String topic, final V msg) {
 
-        final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, key, msg);
+        final ProducerRecord<K, V> recordMsg = new ProducerRecord<>(topic, key, msg);
 
         LOGGER.log(Level.INFO, "Sending msg with key " + key + " to topic " + topic);
         producer.send(recordMsg);
@@ -199,9 +199,9 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         LOGGER.log(Level.INFO, "Sent msg with key " + key + " to topic " + topic);
     }
 
-    public void sendMessage(final String key, final String topic, final T msg, final int partition) {
+    public void sendMessage(final K key, final String topic, final V msg, final int partition) {
 
-        final ProducerRecord<String, T> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
+        final ProducerRecord<K, V> recordMsg = new ProducerRecord<>(topic, partition, key, msg);
 
         LOGGER.log(Level.INFO, "Sending msg with key " + key + " to topic " + topic);
         producer.send(recordMsg);
@@ -213,16 +213,16 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
 
         checkSubscription(topic);
 
-        final ConsumerRecords<String, T> records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
+        final ConsumerRecords<K, V> records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
 
         final List<Map<String, Object>> msgs = new LinkedList<>();
 
-        for (ConsumerRecord<String, T> record : records) {
+        for (ConsumerRecord<K, V> record : records) {
 
             final Map<String, Object> resultMap = new HashMap<>();
 
-            final T message = record.value();
-            final String key = record.key();
+            final V message = record.value();
+            final K key = record.key();
             final long resultOffset = record.offset();
             final int partition = record.partition();
 
