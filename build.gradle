@@ -71,6 +71,7 @@ dependencies {
     compile 'com.wizzardo.tools:tools:+'
     compile 'org.zeromq:jeromq:+'
     compile 'org.apache.kafka:kafka-clients:+'
+    compile 'org.rocksdb:rocksdbjni:+'
     compile('org.apache.hbase:hbase-client:1.1.2') {
 
         exclude module: 'avro'
