@@ -241,6 +241,39 @@ public class KafkaAvroConfluentInterface<T extends SpecificRecordBase> {
         return msgs;
     }
 
+    public List<Map<String, Object>> consumeMessageSync(final String topic) {
+
+        checkSubscription(topic);
+
+        ConsumerRecords<String, T> records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
+
+        while (records.isEmpty()) {
+
+            records = consumer.poll(Duration.ofMillis(CONSUMER_POLL_TIMEOUT));
+        }
+
+        final List<Map<String, Object>> msgs = new LinkedList<>();
+
+        for (ConsumerRecord<String, T> record : records) {
+
+            final Map<String, Object> resultMap = new HashMap<>();
+
+            final T message = record.value();
+            final String key = record.key();
+            final long resultOffset = record.offset();
+            final int partition = record.partition();
+
+            resultMap.put("msg", message);
+            resultMap.put("key", key);
+            resultMap.put("offset", resultOffset);
+            resultMap.put("partition", partition);
+
+            msgs.add(resultMap);
+        }
+
+        return msgs;
+    }
+
     public void closeInterface() {
 
         if (producer != null) {
