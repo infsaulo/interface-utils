@@ -34,12 +34,12 @@ public class KafkaAvroConfluentInterfaceKV <K extends SpecificRecordBase, V exte
         producerProps.put("value.serializer", "io.confluent.kafka.serializers.KafkaAvroSerializer");
         producerProps.put("max.request.size", MAX_MSG_SIZE);
         producerProps.put("compression.type", "snappy");
-        //producerProps.put("acks", "-1");
+        producerProps.put("acks", "-1");
         //producerProps.put("retries", "3");
         //producerProps.put("max.in.flight.requests.per.connection", "1");
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
-        //producerProps.put("min.insync.replicas", "2");
+        producerProps.put("min.insync.replicas", "3");
         //producerProps.put(ProducerConfig.COMPRESSION_TYPE_CONFIG, "snappy");
         //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
@@ -65,12 +65,12 @@ public class KafkaAvroConfluentInterfaceKV <K extends SpecificRecordBase, V exte
         producerProps.put("ssl.keystore.password", keystorePass);
         producerProps.put("ssl.truststore.location", truststoreFilePath);
         producerProps.put("ssl.truststore.password", truststorePass);
-        //producerProps.put("acks", "-1");
+        producerProps.put("acks", "-1");
         //producerProps.put("retries", "3");
         //producerProps.put("max.in.flight.requests.per.connection", "1");
         //producerProps.put("retry.backoff.ms", "1000");
         //producerProps.put("request.timeout.ms", "15000");
-        //producerProps.put("min.insync.replicas", "2");
+        producerProps.put("min.insync.replicas", "3");
         //producerProps.put(ProducerConfig.LINGER_MS_CONFIG, 30000);
         //producerProps.put(ProducerConfig.BATCH_SIZE_CONFIG, 15728640);
 
