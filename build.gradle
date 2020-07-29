@@ -66,6 +66,7 @@ dependencies {
 
         exclude module: 'annotation'
     }
+    compile 'software.amazon.awssdk:s3:+'
     compile 'org.apache.avro:avro:+'
     compile 'io.confluent:kafka-avro-serializer:+'
     compile 'com.wizzardo.tools:tools:+'
