@@ -20,6 +20,11 @@ public class S3Interface {
 
     private final S3Client client;
 
+    public S3Interface(final S3Client client) {
+
+        this.client = client;
+    }
+
     public S3Interface(final String accessKeyId, final String secretAccessKey, final String sessionToken,
                        final Region region) {
 
